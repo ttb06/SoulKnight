@@ -3,6 +3,7 @@
 #include <string>
 #include <SDL.h>
 #include "Components.h"
+#include "../Game.h"
 
 class ColliderComponent : public Component
 {
@@ -23,7 +24,10 @@ public:
         {
             entity->addComponent<TransformComponent>();
         }
+
         transform = &entity->getComponent<TransformComponent>();
+        
+        Game::colliders.push_back(this);
     }
 
     void update() override

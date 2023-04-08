@@ -1,8 +1,9 @@
 #include "Game.h"
+#include "ECS/Components.h"
 #include "TextureManager.h"
 #include "Map.h"
-#include "ECS/Components.h"
 #include "Vector2D.h"
+#include "Collision.h"
 
 using std::cout;
 using std::endl;
@@ -11,10 +12,13 @@ Map *map;
 
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
+std::vector<ColliderComponent*> Game::colliders;
 
 Manager manager;
 auto &player(manager.addEntity());
+
 auto &wall(manager.addEntity());
+auto &zombie(manager.addEntity());
 
 Game::Game()
 {
@@ -60,9 +64,9 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
 
-    wall.addComponent<TransformComponent>(300, 300, 16, 16, 3);
-    wall.addComponent<SpriteComponent>("assets/wall_mid.png");
-    wall.addComponent<ColliderComponent>("wall");
+    zombie.addComponent<TileComponent>(300, 300, 16, 16, 2);
+    zombie.addComponent<SpriteComponent>("assets/ice_zombie_idle_anim_f0.png");
+    zombie.addComponent<ColliderComponent>("zombie");
 }
 
 void Game::handleEvents()
@@ -84,11 +88,13 @@ void Game::update()
     manager.refresh();
     manager.update();
 
-    if (Collision::AABB(player.getComponent<ColliderComponent>().collider, 
-                    wall.getComponent<ColliderComponent>().collider))
+    for (auto collider: colliders)
     {
-        player.getComponent<TransformComponent>().velocity *-1;
-        std::cout << "Wall hit!" << std::endl;
+        if (Collision::AABB(player.getComponent<ColliderComponent>(),
+                            *collider) && collider->tag!= player.getComponent<ColliderComponent>().tag )
+        {
+            player.getComponent<TransformComponent>().velocity * -1;
+        }
     }
 }
 
