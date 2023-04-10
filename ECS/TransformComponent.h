@@ -31,7 +31,7 @@ public:
         scale = sc;
     }
 
-    TransformComponent(int x, int y, int h, int w, int scl)
+    TransformComponent(int x, int y, int w, int h, int scl)
     {
         setPosition(x, y);
         height = h;

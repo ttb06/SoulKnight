@@ -12,13 +12,15 @@ Map *map;
 
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
-std::vector<ColliderComponent*> Game::colliders;
+std::vector<ColliderComponent *> Game::colliders;
 
 Manager manager;
 auto &player(manager.addEntity());
 auto &wall(manager.addEntity());
+auto &bigZombie(manager.addEntity());
 
-enum groupLabels : std::size_t{
+enum groupLabels : std::size_t
+{
     groupMap,
     groupPlayers,
     groupEnemies,
@@ -66,12 +68,15 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     Map::LoadMap("assets/p16x16.map", 16, 16);
 
-    player.addComponent<TransformComponent>(1);
-    player.addComponent<SpriteComponent>("assets/knight_idle_sprite.png");
+    player.addComponent<TransformComponent>(3);
+    player.addComponent<SpriteComponent>("assets/knight_anims.png", true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
     player.addGroup(groupPlayers);
 
+    bigZombie.addComponent<TransformComponent>(10, 10, 32, 34, 3);
+    bigZombie.addComponent<SpriteComponent>("assets/big_zombie_anims.png", true);
+    bigZombie.addGroup(groupEnemies);
 }
 
 void Game::handleEvents()
@@ -93,10 +98,11 @@ void Game::update()
     manager.refresh();
     manager.update();
 
-    for (auto collider: colliders)
+    for (auto collider : colliders)
     {
         if (Collision::AABB(player.getComponent<ColliderComponent>(),
-                            *collider) && collider->tag!= player.getComponent<ColliderComponent>().tag )
+                            *collider) &&
+            collider->tag != player.getComponent<ColliderComponent>().tag)
         {
             player.getComponent<TransformComponent>().velocity * -1;
         }
@@ -110,15 +116,15 @@ auto &players = manager.getGroup(groupPlayers);
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    for (auto t: tiles)
+    for (auto t : tiles)
     {
         t->draw();
     }
-    for (auto p: players)
+    for (auto p : players)
     {
         p->draw();
     }
-    for (auto e:enemies)
+    for (auto e : enemies)
     {
         e->draw();
     }
@@ -139,7 +145,7 @@ void Game::clean()
 
 void Game::AddTile(int id, int x, int y)
 {
-    auto& tile(manager.addEntity());
+    auto &tile(manager.addEntity());
     tile.addComponent<TileComponent>(x, y, 16, 16, id);
     tile.addGroup(groupMap);
 }
