@@ -1,4 +1,4 @@
 main.exe
 *.dll
-.vscode/
+.vscode
 Makefile
