@@ -25,14 +25,14 @@ public:
 
         switch (id)
         {
-        case 0:
-            path = "assets/floor_1.png";
-            break;
         case 1:
-            path = "assets/wall_mid.png";
+            path = "assets/tileset_1.png";
             break;
         case 2:
-            path = "assets/ice_zombie_idle_anim_f0.png";
+            path = "assets/tileset_2.png";
+            break;
+        case 3:
+            path = "assets/tileset_3.png";
         default:
             break;
         }

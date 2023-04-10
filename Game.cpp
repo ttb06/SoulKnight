@@ -18,7 +18,6 @@ Manager manager;
 auto &player(manager.addEntity());
 
 auto &wall(manager.addEntity());
-auto &zombie(manager.addEntity());
 
 Game::Game()
 {
@@ -59,14 +58,13 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     // esc implementation
 
-    player.addComponent<TransformComponent>(2);
+    Map::LoadMap("assets/p16x16.map", 16, 16);
+
+    player.addComponent<TransformComponent>(1);
     player.addComponent<SpriteComponent>("assets/knight_idle_sprite.png");
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
-
-    zombie.addComponent<TileComponent>(300, 300, 16, 16, 2);
-    zombie.addComponent<SpriteComponent>("assets/ice_zombie_idle_anim_f0.png");
-    zombie.addComponent<ColliderComponent>("zombie");
+ 
 }
 
 void Game::handleEvents()
@@ -101,8 +99,6 @@ void Game::update()
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    // Draw anything to here
-    map->DrawMap();
     manager.draw();
     SDL_RenderPresent(renderer);
 }
@@ -117,4 +113,10 @@ void Game::clean()
 
     SDL_Quit();
     cout << "Game cleaned! ...\n";
+}
+
+void Game::AddTile(int id, int x, int y)
+{
+    auto& tile(manager.addEntity());
+    tile.addComponent<TileComponent>(x, y, 16, 16, id);
 }

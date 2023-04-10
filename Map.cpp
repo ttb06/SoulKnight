@@ -1,81 +1,30 @@
 #include "Map.h"
-#include "TextureManager.h"
-
-int lv1[20][25] =
-    {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-};
+#include "Game.h"
+#include <fstream>
 
 Map::Map()
 {
-    wall = TextureManager::loadTexture("assets/wall_mid.png");
-    floor = TextureManager::loadTexture("assets/floor_1.png");
-
-    src = {0, 0, 16, 16};
-    dest = {0, 0, 32, 32};
-
-    LoadMap(lv1);
 }
 
 Map::~Map()
 {
-    SDL_DestroyTexture(wall);
-    SDL_DestroyTexture(floor);
 }
 
-void Map::LoadMap(int arr[20][25])
+void Map::  LoadMap(std::string path, int sizeX, int sizeY)
 {
-    for (int row = 0; row < 20; row++)
+    char tile;
+    std::fstream mapFile;
+    mapFile.open(path);
+
+    for (int y = 0; y < sizeY; y++)
     {
-        for (int column = 0; column < 25; column++)
+        for (int x = 0; x < sizeX; x++)
         {
-            map[row][column] = arr[row][column];
+            mapFile.get(tile);
+            Game::AddTile(atoi(&tile), x * 16, y * 16);
+            mapFile.ignore();
         }
     }
-}
 
-void Map::DrawMap()
-{
-    int type;
-
-    for (int row = 0; row < 20; row++)
-    {
-        for (int column = 0; column < 25; column++)
-        {
-            type = map[row][column];
-
-            dest.x = column * dest.w;
-            dest.y = row * dest.h;
-
-            switch (type)
-            {
-            case 0:
-                TextureManager::Draw(floor, src, dest);
-                break;
-
-            case 1:
-                TextureManager::Draw(wall, src, dest);
-                break;
-            }
-        }
-    }
+    mapFile.close();
 }
