@@ -18,9 +18,8 @@ private:
     int speed = 100;
 
 public:
-    
     int animIndex = 0;
-    std::map<const char*, Animation> animations;
+    std::map<const char *, Animation> animations;
     SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
 
     SpriteComponent() = default;
@@ -30,13 +29,13 @@ public:
         setTex(path);
     }
 
-    SpriteComponent(const char *path, bool isAnim )
+    SpriteComponent(const char *path, bool isAnim)
     {
         animated = isAnim;
 
         Animation idle = Animation(0, 4, 150);
-        Animation run = Animation(1, 4, 150);
-        
+        Animation run = Animation(1, 4, 100);
+
         animations.emplace("Idle", idle);
         animations.emplace("Run", run);
 
@@ -70,11 +69,11 @@ public:
         {
             srcRect.x = srcRect.w * (int)((SDL_GetTicks() / speed) % frames);
         }
-        
+
         srcRect.y = animIndex * transform->height;
 
-        destRect.x = (int)transform->position.x;
-        destRect.y = (int)transform->position.y;
+        destRect.x = (int)transform->position.x - Game::camera.x;
+        destRect.y = (int)transform->position.y - Game::camera.y;
         destRect.w = srcRect.w * transform->scale;
         destRect.h = srcRect.h * transform->scale;
     }
@@ -84,9 +83,9 @@ public:
         TextureManager::Draw(texture, srcRect, destRect, spriteFlip);
     }
 
-    void Play(const char* animName)
+    void Play(const char *animName)
     {
-        frames= animations[animName].frames;
+        frames = animations[animName].frames;
         speed = animations[animName].speed;
         animIndex = animations[animName].index;
     }

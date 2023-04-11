@@ -7,43 +7,40 @@
 class TileComponent : public Component
 {
 public:
-    TransformComponent *transform;
-    SpriteComponent *sprite;
+    SDL_Texture *texture;
+    SDL_Rect srcRect, destRect;
+    Vector2D position;
 
-    SDL_Rect tileRect;
-    int tileID;
-    char *path;
     TileComponent() = default;
 
-    TileComponent(int x, int y, int w, int h, int id)
+    ~TileComponent()
     {
-        tileRect.x = x;
-        tileRect.y = y;
-        tileRect.w = w;
-        tileRect.h = h;
-        tileID = id;
-
-        switch (id)
-        {
-        case 1:
-            path = "assets/tileset_1.png";
-            break;
-        case 2:
-            path = "assets/tileset_2.png";
-            break;
-        case 3:
-            path = "assets/tileset_3.png";
-        default:
-            break;
-        }
+        SDL_DestroyTexture(texture);
     }
-    
-    void init() override
-    {
-        entity->addComponent<TransformComponent>(tileRect.x, tileRect.y, tileRect.w, tileRect.h, 1);
-        transform = &entity->getComponent<TransformComponent>();
 
-        entity->addComponent<SpriteComponent>(path);
-        sprite = &entity->getComponent<SpriteComponent>();
+    TileComponent(int srcX, int srcY, int xPos, int yPos, int tsize, int tscale, const char *path)
+    {
+        texture = TextureManager::loadTexture(path);
+        position.x = xPos;
+        position.y = yPos;
+
+        srcRect.x = srcX;
+        srcRect.y = srcY;
+        srcRect.w = srcRect.h = tsize;
+
+        destRect.x = xPos;
+        destRect.y = yPos;
+        destRect.w = destRect.h = tsize * tscale;
+    }
+
+    void update() override
+    {
+        destRect.x = position.x - Game::camera.x;
+        destRect.y = position.y - Game::camera.y;
+    }
+
+    void draw() override
+    {
+        TextureManager::Draw(texture, srcRect, destRect, SDL_FLIP_NONE);
     }
 };
