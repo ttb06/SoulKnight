@@ -18,7 +18,9 @@ private:
     int speed = 100;
 
 public:
+    bool hasHitAnim = false;
     int animIndex = 0;
+    
     std::map<const char *, Animation> animations;
     SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
 
@@ -29,7 +31,7 @@ public:
         setTex(path);
     }
 
-    SpriteComponent(const char *path, bool isAnim)
+    SpriteComponent(const char *path, bool isAnim, bool hit = false)
     {
         animated = isAnim;
 
@@ -38,6 +40,13 @@ public:
 
         animations.emplace("Idle", idle);
         animations.emplace("Run", run);
+
+        hasHitAnim = hit;
+        if (hasHitAnim == true)
+        {
+            Animation hit = Animation(2, 2, 100);
+            animations.emplace("Hit", hit);
+        }
 
         Play("Idle");
         setTex(path);

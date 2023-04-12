@@ -60,9 +60,10 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     map->LoadMap("assets/map_demo_30x30.map", 30, 30);
 
     player.addComponent<TransformComponent>(300, 300, 16, 28, 3);
-    player.addComponent<SpriteComponent>("assets/knight_anims.png", true);
+    player.addComponent<SpriteComponent>("assets/knight_anims.png", true, true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
+    player.addComponent<HUDComponent>(10, 10);
     player.addGroup(groupPlayers);
 
     // bigZombie.addComponent<TransformComponent>(10, 10, 32, 34, 3, 5);
@@ -99,13 +100,14 @@ void Game::update()
 
     manager.refresh();
     manager.update();
-    std::cout << colliders.size() << endl;
+
     for (auto &c : colliders)
     {
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         if (Collision::AABB(playerCol, cCol))
         {
             player.getComponent<TransformComponent>().position = playerPos;
+            player.getComponent<HUDComponent>().getDamage(1);
         }
     }
 
