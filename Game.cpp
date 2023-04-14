@@ -4,11 +4,13 @@
 #include "Map.h"
 #include "Vector2D.h"
 #include "Collision.h"
+#include "AssetManager.h"
 
 using std::cout;
 using std::endl;
 
 Map *map;
+Manager manager;
 
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
@@ -16,7 +18,8 @@ SDL_Event Game::event;
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 bool Game::isRunning = false;
 
-Manager manager;
+AssetManager *Game::assets = new AssetManager(&manager);
+
 auto &player(manager.addEntity());
 auto &bigZombie(manager.addEntity());
 
@@ -55,25 +58,38 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
         isRunning = true;
     }
 
+    assets->AddTexture("terrain", "assets/tiles_assets.png");
+    assets->AddTexture("player", "assets/knight_anims.png");
+    assets->AddTexture("projectile", "assets/proj.png");
     // esc implementation
-    map = new Map("assets/tiles_assets.png", 3, 16);
+
+    map = new Map("terrain", 3, 16);
     map->LoadMap("assets/map_demo_30x30.map", 30, 30);
 
     player.addComponent<TransformComponent>(300, 300, 16, 28, 3);
-    player.addComponent<SpriteComponent>("assets/knight_anims.png", true, true);
+    player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
     player.addComponent<HUDComponent>(10, 10);
     player.addGroup(groupPlayers);
+
+    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 1), 200, 1, "projectile");
+    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 1, "projectile");
+    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 3), 200, 1, "projectile");
+    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 4), 200, 1, "projectile");
+    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 5), 200, 1, "projectile");
+    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
+    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
     // bigZombie.addComponent<TransformComponent>(10, 10, 32, 34, 3, 5);
     // bigZombie.addComponent<SpriteComponent>("assets/big_zombie_anims.png", true);
     // bigZombie.addGroup(groupEnemies);
 }
 
-auto &tiles = manager.getGroup(Game::groupMap);
-auto &players = manager.getGroup(Game::groupPlayers);
-auto &colliders = manager.getGroup(Game::groupColliders);
+auto &tiles(manager.getGroup(Game::groupMap));
+auto &players(manager.getGroup(Game::groupPlayers));
+auto &colliders(manager.getGroup(Game::groupColliders));
+auto &projectiles(manager.getGroup(Game::groupProjectiles));
 
 void Game::handleEvents()
 {
@@ -107,6 +123,15 @@ void Game::update()
         if (Collision::AABB(playerCol, cCol))
         {
             player.getComponent<TransformComponent>().position = playerPos;
+        }
+    }
+
+    for (auto &p : projectiles)
+    {
+        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
+        {
+            p->destroy();
+            std::cout << "Hit player" << std::endl;
             player.getComponent<HUDComponent>().getDamage(1);
         }
     }
@@ -124,43 +149,30 @@ void Game::update()
         camera.x = camera.w;
     if (camera.y > camera.h)
         camera.y = camera.h;
-
-    // Vector2D pVel = player.getComponent<TransformComponent>().velocity;
-    // int pSpeed = player.getComponent<ponent>().destRect.x += -(int)(pVel.x * pSpeedDiag);
-    //         t->getComponent<TileComponent>().destRect.y += -(int)(pVel.y * pSpeedDiag);
-    //     }
-    //     else
-    //     {
-    //         t->getComponent<TileComponent>().destRect.x += -(pVel.x * pSpeed);
-    //         t->getComponent<TileComponent>().destRect.y += -(pVel.y * pSpeed);
-    //     }
-    // }TransformComponent>().speed;
-    // int pSpeedDiag = (int)(0.70710678118*pSpeed);
-    // for (auto t : tiles)
-    // {
-    //     if ((pVel.x != 0) && (pVel.y != 0))
-    //     {
-    //         t->getComponent<TileCom
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    for (auto t : tiles)
+    for (auto &t : tiles)
     {
         t->draw();
     }
 
-    for (auto c : colliders)
+    for (auto &c : colliders)
     {
         c->draw();
     }
 
-    for (auto p : players)
+    for (auto &p : players)
     {
         p->draw();
     }
 
+    for (auto &p : projectiles)
+    {
+        p->draw();
+    }
     SDL_RenderPresent(renderer);
 }
 

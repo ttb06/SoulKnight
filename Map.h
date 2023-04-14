@@ -4,14 +4,15 @@
 class Map
 {
 public:
-    Map(const char* mfp, int ms, int ts);
+    Map(std::string tID, int ms, int ts);
     ~Map();
 
     void LoadMap(std::string path, int sizeX, int sizeY);
     void AddTile(int srcX, int srcY, int xPos, int yPos);
 
 private:
-    const char* mapFilePath;
+    std::string texID;
     int mapScale;
     int tileSize;
+    int scaledSize;
 };

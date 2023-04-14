@@ -7,11 +7,12 @@
 // manager has been defined somewhere else
 extern Manager manager;
 
-Map::Map(const char *mfp, int ms, int ts)
+Map::Map(std::string tID, int ms, int ts)
 {
-    mapFilePath = mfp;
+    texID = tID;
     mapScale = ms;
     tileSize = ts;
+    scaledSize = ms * ts;
 }
 
 Map::~Map()
@@ -47,7 +48,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
             srcY = (atoi(index.c_str()) / 10) * tileSize;
             srcX = (atoi(index.c_str()) % 10) * tileSize;
 
-            AddTile(srcX, srcY, x * tileSize * mapScale, y * tileSize * mapScale);
+            AddTile(srcX, srcY, x * scaledSize, y * scaledSize);
         }
     }
 
@@ -71,7 +72,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
             if (atoi(index.c_str()) == 1)
             {
                 auto &tCol(manager.addEntity());
-                tCol.addComponent<ColliderComponent>("terrain", x * tileSize * mapScale, y * tileSize * mapScale, tileSize * mapScale);
+                tCol.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize);
                 tCol.addGroup(Game::groupColliders);
             }
         }
@@ -81,6 +82,6 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 void Map::AddTile(int srcX, int srcY, int xPos, int yPos)
 {
     auto &tile(manager.addEntity());
-    tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, tileSize, mapScale, mapFilePath);
+    tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, tileSize, mapScale, texID);
     tile.addGroup(Game::groupMap);
 }

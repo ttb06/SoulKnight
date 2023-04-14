@@ -7,3 +7,4 @@
 #include "ColliderComponent.h"
 #include "TileComponent.h"
 #include "HUDComponent.h"
+#include "ProjectileComponent.h"

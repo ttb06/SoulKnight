@@ -67,17 +67,8 @@ public:
 
     void update() override
     {
-        int speedDiag = (int)(0.70710678118*speed);
-        if (velocity.x != 0 && velocity.y != 0)
-        {
-            position.x += velocity.x * speed;
-            position.y += velocity.y * speed;
-        }
-        else
-        {
-            position.x += velocity.x * speed;
-            position.y += velocity.y * speed;
-        }
+        position.x += velocity.x * speed;
+        position.y += velocity.y * speed;
     }
 
     void setPosition(int x, int y)

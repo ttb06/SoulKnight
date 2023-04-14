@@ -3,12 +3,13 @@
 #include "ECS.h"
 #include "../Game.h"
 #include "Components.h"
+#include <math.h>
 
 class KeyboardController : public Component
 {
 public:
     TransformComponent *transform;
-    SpriteComponent* sprite;
+    SpriteComponent *sprite;
 
     void init() override
     {
@@ -41,6 +42,16 @@ public:
                 sprite->spriteFlip = SDL_FLIP_NONE;
                 break;
             }
+
+            if (abs(transform->velocity.x) == 1 && abs(transform->velocity.y) != 0)
+            {
+                transform->velocity.x = transform->velocity.x * sin(M_PI_4);
+            }
+            
+            if (abs(transform->velocity.x) != 0 && abs(transform->velocity.y) == 1)
+            {
+                transform->velocity.y = transform->velocity.y * sin(M_PI_4);
+            }
         }
         if (Game::event.type == SDL_KEYUP)
         {
@@ -65,5 +76,6 @@ public:
                 break;
             }
         }
+        std::cout << transform->velocity << std::endl;
     }
 };
