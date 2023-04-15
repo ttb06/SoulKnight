@@ -6,6 +6,8 @@
 #include "Collision.h"
 #include "AssetManager.h"
 
+#include <sstream>
+
 using std::cout;
 using std::endl;
 
@@ -22,6 +24,7 @@ AssetManager *Game::assets = new AssetManager(&manager);
 
 auto &player(manager.addEntity());
 auto &bigZombie(manager.addEntity());
+auto &label(manager.addEntity());
 
 Game::Game()
 {
@@ -58,20 +61,33 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
         isRunning = true;
     }
 
+    if (TTF_Init() == -1)
+    {
+        std::cout << "Error: SDL_TTF" << std::endl;
+    }
+
     assets->AddTexture("terrain", "assets/tiles_assets.png");
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
-    // esc implementation
+
+    assets->AddFont("candara", "assets/candara.ttf", 16);
 
     map = new Map("terrain", 3, 16);
+
+    // esc implementation
+
     map->LoadMap("assets/map_demo_30x30.map", 30, 30);
 
-    player.addComponent<TransformComponent>(300, 300, 16, 28, 3);
+    player.addComponent<TransformComponent>(300, 300, 16, 28, 3, 5);
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
-    player.addComponent<HUDComponent>(10, 10);
+    // player.addComponent<HUDComponent>(10, 10);
     player.addGroup(groupPlayers);
+
+    SDL_Color white = {255, 255, 255, 255};
+
+    label.addComponent<UILabel>(10, 10, "nothing happen", "candara", white);
 
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 1), 200, 1, "projectile");
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 1, "projectile");
@@ -114,6 +130,11 @@ void Game::update()
     SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
     Vector2D playerPos = player.getComponent<TransformComponent>().position;
 
+    std::stringstream ss;
+    ss << "Player Position: " << playerPos;
+    std::cout << ss.str();
+    label.getComponent<UILabel>().SetLabelText(ss.str(), "candara");
+
     manager.refresh();
     manager.update();
 
@@ -122,7 +143,8 @@ void Game::update()
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         if (Collision::AABB(playerCol, cCol))
         {
-            player.getComponent<TransformComponent>().position = playerPos;
+            player.getComponent<TransformComponent>().position.x -= player.getComponent<TransformComponent>().velocity.x;
+            player.getComponent<TransformComponent>().position.y -= player.getComponent<TransformComponent>().velocity.y;
         }
     }
 
@@ -132,7 +154,7 @@ void Game::update()
         {
             p->destroy();
             std::cout << "Hit player" << std::endl;
-            player.getComponent<HUDComponent>().getDamage(1);
+            // player.getComponent<HUDComponent>().getDamage(1);
         }
     }
 
@@ -173,6 +195,9 @@ void Game::render()
     {
         p->draw();
     }
+
+    label.draw();
+
     SDL_RenderPresent(renderer);
 }
 

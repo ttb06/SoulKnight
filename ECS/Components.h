@@ -8,3 +8,4 @@
 #include "TileComponent.h"
 #include "HUDComponent.h"
 #include "ProjectileComponent.h"
+#include "UILabel.h"
