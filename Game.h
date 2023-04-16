@@ -33,7 +33,8 @@ public:
         groupMap,
         groupPlayers,
         groupColliders,
-        groupProjectiles
+        groupProjectiles,
+        groupEnermies
     };
 
 private:

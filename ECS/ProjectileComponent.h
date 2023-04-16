@@ -28,7 +28,7 @@ public:
 
         if (distance > range)
         {
-            std::cout << "Out of range" << std::endl;
+            std::cout << "[ProjectileComponent.h]: Out of range" << std::endl;
             entity->destroy();
         }
         else if (transform->position.x > Game::camera.x + Game::camera.w ||
@@ -36,7 +36,7 @@ public:
                  transform->position.y > Game::camera.y + Game::camera.h ||
                  transform->position.y < Game::camera.y)
         {
-            std::cout << "Out of Camera" << std::endl;
+            std::cout << "[ProjectileComponent.h]: Out of Camera" << std::endl;
             entity->destroy();
         }
     }

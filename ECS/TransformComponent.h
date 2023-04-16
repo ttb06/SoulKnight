@@ -62,7 +62,6 @@ public:
 
     void init() override
     {
-        velocity.Zero();
     }
 
     void update() override

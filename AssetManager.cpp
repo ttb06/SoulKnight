@@ -20,6 +20,16 @@ void AssetManager::CreatProjectile(Vector2D pos, Vector2D vel, int range, int sp
     projectile.addGroup(Game::groupProjectiles);
 }
 
+void AssetManager::CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD)
+{
+    auto &enermy(manager->addEntity());
+    enermy.addComponent<TransformComponent>(pos.x, pos.y, width, height, 3, spd);
+    enermy.addComponent<SpriteComponent>(idSprite, true, false);
+    enermy.addComponent<ColliderComponent>(idSprite);
+    enermy.addComponent<EnermyComponent>(mH, cD);
+    enermy.addGroup(Game::groupEnermies);
+}
+
 void AssetManager::AddTexture(std::string id, const char *path)
 {
     textures.emplace(id, TextureManager::loadTexture(path));
@@ -39,5 +49,3 @@ TTF_Font *AssetManager::GetFont(std::string id)
 {
     return fonts[id];
 }
-
-

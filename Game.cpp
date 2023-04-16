@@ -22,17 +22,12 @@ bool Game::isRunning = false;
 
 AssetManager *Game::assets = new AssetManager(&manager);
 
-auto &player(manager.addEntity());
-auto &bigZombie(manager.addEntity());
+Entity &player(manager.addEntity());
 auto &label(manager.addEntity());
 
-Game::Game()
-{
-}
+Game::Game() {}
 
-Game::~Game()
-{
-}
+Game::~Game() {}
 
 void Game::init(const char *title, int xPos, int yPos, int width, int height, bool fullScreen)
 {
@@ -66,23 +61,27 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
         std::cout << "Error: SDL_TTF" << std::endl;
     }
 
+    // assets implenemtation
+
+    // add Texture
     assets->AddTexture("terrain", "assets/tiles_assets.png");
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
+    assets->AddTexture("big_demon", "assets/big_demon_amins.png");
 
+    // add Font
     assets->AddFont("candara", "assets/candara.ttf", 16);
 
     map = new Map("terrain", 3, 16);
 
     // esc implementation
-
     map->LoadMap("assets/map_demo_30x30.map", 30, 30);
 
     player.addComponent<TransformComponent>(301, 301, 16, 28, 3, 5);
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
-    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6));
+    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), true);
     player.addGroup(groupPlayers);
 
     SDL_Color white = {255, 255, 255, 255};
@@ -97,15 +96,14 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
-    // bigZombie.addComponent<TransformComponent>(10, 10, 32, 34, 3, 5);
-    // bigZombie.addComponent<SpriteComponent>("assets/big_zombie_anims.png", true);
-    // bigZombie.addGroup(groupEnemies);
+    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 0 );
 }
 
 auto &tiles(manager.getGroup(Game::groupMap));
 auto &players(manager.getGroup(Game::groupPlayers));
 auto &colliders(manager.getGroup(Game::groupColliders));
 auto &projectiles(manager.getGroup(Game::groupProjectiles));
+auto &enermies(manager.getGroup(Game::groupEnermies));
 
 void Game::handleEvents()
 {
@@ -158,11 +156,15 @@ void Game::update()
             }
 
             break;
-            // playerPos.x -= playerVel.x * playerSpeed;
-            // playerPos.y -= playerVel.y * playerSpeed;
+        }
+    }
 
-            // player.getComponent<TransformComponent>().position = playerPos;
-            // player.getComponent<TransformComponent>().velocity = Vector2D(0, 0);
+    for (auto &e : enermies)
+    {
+        SDL_Rect eCol = e->getComponent<ColliderComponent>().collider;
+        if (Collision::AABB(playerCol, eCol))
+        {
+            player.getComponent<HUDComponent>().getDamage(e->getComponent<EnermyComponent>().collisionDamage);
         }
     }
 
@@ -196,13 +198,19 @@ void Game::render()
     SDL_RenderClear(renderer);
     for (auto &t : tiles)
     {
-        t->draw();
+        // if (Collision::AABB(camera, t->getComponent<ColliderComponent>().collider))
+            t->draw();
     }
 
     for (auto &c : colliders)
     {
         if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
             c->draw();
+    }
+
+    for (auto &e : enermies)
+    {
+        e->draw();
     }
 
     for (auto &p : players)

@@ -1,4 +1,5 @@
 #include "Vector2D.h"
+#include "math.h"
 
 Vector2D::Vector2D()
 {
@@ -13,6 +14,11 @@ Vector2D::Vector2D(float x, float y)
 }
 
 Vector2D::~Vector2D() {}
+
+double Vector2D::len()
+{
+    return sqrt(x*x + y*y);
+}
 
 Vector2D &Vector2D::Add(const Vector2D &vec)
 {
