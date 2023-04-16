@@ -44,8 +44,8 @@ public:
 
     TransformComponent(int x, int y, int w, int h, int scl)
     {
-        position.x = x + SCREEN_WIDTH / 2 - 16;
-        position.y = y + SCREEN_HEIGHT / 2 - 28;
+        position.x = x + SCREEN_WIDTH / 2 - w;
+        position.y = y + SCREEN_HEIGHT / 2 - h;
         height = h;
         width = w;
         scale = scl;

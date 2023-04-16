@@ -78,16 +78,16 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     map->LoadMap("assets/map_demo_30x30.map", 30, 30);
 
-    player.addComponent<TransformComponent>(300, 300, 16, 28, 3, 5);
+    player.addComponent<TransformComponent>(301, 301, 16, 28, 3, 5);
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
-    // player.addComponent<HUDComponent>(10, 10);
+    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6));
     player.addGroup(groupPlayers);
 
     SDL_Color white = {255, 255, 255, 255};
 
-    label.addComponent<UILabel>(10, 10, "nothing happen", "candara", white);
+    label.addComponent<UILabel>(10, 10, "Init", "candara", white);
 
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 1), 200, 1, "projectile");
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 1, "projectile");
@@ -126,25 +126,43 @@ void Game::handleEvents()
 
 void Game::update()
 {
+    // store old information
+    if (player.getComponent<HUDComponent>().curHealth == 0)
+        Game::isRunning = false;
 
     SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
     Vector2D playerPos = player.getComponent<TransformComponent>().position;
-
-    std::stringstream ss;
-    ss << "Player Position: " << playerPos;
-    std::cout << ss.str();
-    label.getComponent<UILabel>().SetLabelText(ss.str(), "candara");
+    Vector2D playerVel = player.getComponent<TransformComponent>().velocity;
+    int playerSpeed = player.getComponent<TransformComponent>().speed;
 
     manager.refresh();
     manager.update();
+
+    std::stringstream ss;
+    ss << "Player Position: " << playerPos;
+    label.getComponent<UILabel>().SetLabelText(ss.str(), "candara");
 
     for (auto &c : colliders)
     {
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         if (Collision::AABB(playerCol, cCol))
         {
-            player.getComponent<TransformComponent>().position.x -= player.getComponent<TransformComponent>().velocity.x;
-            player.getComponent<TransformComponent>().position.y -= player.getComponent<TransformComponent>().velocity.y;
+            std::cout << "[Game.cpp]: Player hit collider" << std::endl;
+            player.getComponent<TransformComponent>().position.x -= playerVel.x * playerSpeed;
+            player.getComponent<TransformComponent>().position.y -= playerVel.y * playerSpeed;
+
+            if (player.getComponent<TransformComponent>().position.x == playerPos.x &&
+                player.getComponent<TransformComponent>().position.y == playerPos.y)
+            {
+                std::cout << "[Game.cpp]: Player returned to the old position" << std::endl;
+            }
+
+            break;
+            // playerPos.x -= playerVel.x * playerSpeed;
+            // playerPos.y -= playerVel.y * playerSpeed;
+
+            // player.getComponent<TransformComponent>().position = playerPos;
+            // player.getComponent<TransformComponent>().velocity = Vector2D(0, 0);
         }
     }
 
@@ -153,15 +171,15 @@ void Game::update()
         if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
         {
             p->destroy();
-            std::cout << "Hit player" << std::endl;
+            std::cout << "[Game.cpp]: Hit player" << std::endl;
             // player.getComponent<HUDComponent>().getDamage(1);
         }
     }
 
     // camera.x = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2 ;
     // camera.y = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2;
-    camera.x = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2 + player.getComponent<TransformComponent>().width;
-    camera.y = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2 + player.getComponent<TransformComponent>().height;
+    camera.x = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2 + player.getComponent<TransformComponent>().width / 2;
+    camera.y = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2 + player.getComponent<TransformComponent>().height / 2;
 
     if (camera.x < 0)
         camera.x = 0;
@@ -183,7 +201,8 @@ void Game::render()
 
     for (auto &c : colliders)
     {
-        c->draw();
+        if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+            c->draw();
     }
 
     for (auto &p : players)
@@ -193,7 +212,8 @@ void Game::render()
 
     for (auto &p : projectiles)
     {
-        p->draw();
+        if (Collision::AABB(camera, p->getComponent<ColliderComponent>().collider))
+            p->draw();
     }
 
     label.draw();
