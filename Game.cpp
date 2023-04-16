@@ -24,7 +24,8 @@ bool Game::isRunning = false;
 AssetManager *Game::assets = new AssetManager(&manager);
 
 Entity &player(manager.addEntity());
-auto &label(manager.addEntity());
+Entity &label(manager.addEntity());
+Entity &weapon(manager.addEntity());
 
 Game::Game() {}
 
@@ -69,6 +70,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
     assets->AddTexture("big_demon", "assets/big_demon_amins.png");
+    assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
 
     // add Font
     assets->AddFont("candara", "assets/candara.ttf", 16);
@@ -85,6 +87,9 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), true);
     player.addGroup(groupPlayers);
 
+    weapon.addComponent<WeaponComponent>("anime_sword", 12, 30, 3);
+    weapon.addGroup(Game::groupWeapons);
+
     SDL_Color white = {255, 255, 255, 255};
 
     label.addComponent<UILabel>(10, 10, "Init", "candara", white);
@@ -97,7 +102,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
-    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 0);
+    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
 }
 
 auto &tiles(manager.getGroup(Game::groupMap));
@@ -105,6 +110,7 @@ auto &players(manager.getGroup(Game::groupPlayers));
 auto &colliders(manager.getGroup(Game::groupColliders));
 auto &projectiles(manager.getGroup(Game::groupProjectiles));
 auto &enermies(manager.getGroup(Game::groupEnermies));
+auto &weapons(manager.getGroup(Game::groupWeapons));
 
 void Game::handleEvents()
 {
@@ -126,7 +132,7 @@ void Game::handleEvents()
 void Game::update()
 {
     // store old information
-    if (player.getComponent<HUDComponent>().curHealth == 0)
+    if (player.getComponent<HUDComponent>().curHealth <= 0)
         Game::isRunning = false;
 
     SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
@@ -218,13 +224,12 @@ void Game::render()
     {
         p->draw();
     }
-    
+
     for (auto &e : enermies)
     {
         if (Collision::isFront(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
             e->draw();
     }
-
 
     for (auto &p : projectiles)
     {
@@ -232,6 +237,12 @@ void Game::render()
             p->draw();
     }
 
+    for (auto&w : weapons)
+    {
+        w->draw();
+    }
+    // SDL_Rect src = {0, 0, 12, 30}, dest = {(int)player.getComponent<TransformComponent>().position.x - camera.x, (int)player.getComponent<TransformComponent>().position.y -camera.y, 12, 30};
+    // TextureManager::Draw(Game::assets->GetTexture("anime_sword"), src, dest, SDL_FLIP_NONE);
     label.draw();
 
     SDL_RenderPresent(renderer);

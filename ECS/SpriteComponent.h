@@ -90,6 +90,10 @@ public:
     void draw() override
     {
         TextureManager::Draw(texture, srcRect, destRect, spriteFlip);
+        // if (entity->hasComponent<WeaponComponent>())
+        // {
+        //     entity->getComponent<WeaponComponent>().draw();
+        // }
     }
 
     void Play(const char *animName)

@@ -10,3 +10,4 @@
 #include "ProjectileComponent.h"
 #include "UILabel.h"
 #include "EnermyComponent.h"
+#include "WeaponComponent.h"

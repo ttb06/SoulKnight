@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Components.h"
+#include "ECS.h"
 #include "../Game.h"
 #include "math.h"
 
@@ -35,7 +36,7 @@ public:
         wayToPlayer.x = player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x;
         wayToPlayer.y = player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y;
 
-        std::cout<< "[EnermyComponent.h]: distance to player: " << wayToPlayer.len() << std::endl;
+        // std::cout<< "[EnermyComponent.h]: distance to player: " << wayToPlayer.len() << std::endl;
 
         if (wayToPlayer.len() > 500)
         {
