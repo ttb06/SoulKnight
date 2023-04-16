@@ -35,11 +35,20 @@ public:
         wayToPlayer.x = player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x;
         wayToPlayer.y = player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y;
 
-        double sinA = wayToPlayer.x / wayToPlayer.len();
-        double cosA = wayToPlayer.y / wayToPlayer.len();
+        std::cout<< "[EnermyComponent.h]: distance to player: " << wayToPlayer.len() << std::endl;
 
-        entity->getComponent<TransformComponent>().velocity.x = sinA;
-        entity->getComponent<TransformComponent>().velocity.y = cosA;
+        if (wayToPlayer.len() > 500)
+        {
+            entity->getComponent<TransformComponent>().velocity.Zero();
+        }
+        else
+        {
+            double sinA = wayToPlayer.x / wayToPlayer.len();
+            double cosA = wayToPlayer.y / wayToPlayer.len();
+
+            entity->getComponent<TransformComponent>().velocity.x = sinA;
+            entity->getComponent<TransformComponent>().velocity.y = cosA;
+        }
 
         // if (entity->getComponent<TransformComponent>().velocity.x != 0 ||
         //     entity->getComponent<TransformComponent>().velocity.y != 0)

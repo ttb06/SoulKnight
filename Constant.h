@@ -5,3 +5,6 @@ const int SCREEN_HEIGHT = 675;
 
 const int FPS = 60;
 const int frameDelay = 1000/FPS;
+
+const int LEVEL_WIDTH = 16000;
+const int LEVEL_HEIGHT = 16000;

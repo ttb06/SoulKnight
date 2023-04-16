@@ -18,6 +18,7 @@ SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
 bool Game::isRunning = false;
 
 AssetManager *Game::assets = new AssetManager(&manager);
@@ -96,7 +97,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
-    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 0 );
+    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 0);
 }
 
 auto &tiles(manager.getGroup(Game::groupMap));
@@ -154,7 +155,6 @@ void Game::update()
             {
                 std::cout << "[Game.cpp]: Player returned to the old position" << std::endl;
             }
-
             break;
         }
     }
@@ -187,10 +187,10 @@ void Game::update()
         camera.x = 0;
     if (camera.y < 0)
         camera.y = 0;
-    if (camera.x > camera.w)
-        camera.x = camera.w;
+    if (camera.x > LEVEL_WIDTH - camera.w)
+        camera.x = LEVEL_WIDTH - camera.w;
     if (camera.y > camera.h)
-        camera.y = camera.h;
+        camera.y = LEVEL_HEIGHT - camera.w;
 }
 
 void Game::render()
@@ -199,7 +199,7 @@ void Game::render()
     for (auto &t : tiles)
     {
         // if (Collision::AABB(camera, t->getComponent<ColliderComponent>().collider))
-            t->draw();
+        t->draw();
     }
 
     for (auto &c : colliders)
@@ -210,13 +210,21 @@ void Game::render()
 
     for (auto &e : enermies)
     {
-        e->draw();
+        if (!Collision::isFront(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+            e->draw();
     }
 
     for (auto &p : players)
     {
         p->draw();
     }
+    
+    for (auto &e : enermies)
+    {
+        if (Collision::isFront(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+            e->draw();
+    }
+
 
     for (auto &p : projectiles)
     {

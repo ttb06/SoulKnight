@@ -13,7 +13,7 @@ bool Collision::AABB(const SDL_Rect &recA, const SDL_Rect &recB)
     return false;
 }
 
-bool isFront(const SDL_Rect &recA, const SDL_Rect &recB)
+bool Collision::isFront(const SDL_Rect &recA, const SDL_Rect &recB)
 {
     if (recA.y + recA.h > recB.y + recB.h)
         return true;
