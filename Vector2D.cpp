@@ -20,6 +20,17 @@ double Vector2D::len()
     return sqrt(x*x + y*y);
 }
 
+double Vector2D::getAngleRadians()
+{
+    double sin = y / len();
+    return asin(sin);
+}
+
+double Vector2D::getAngleDegrees()
+{
+    return getAngleRadians() * 180 / M_PI;
+}
+
 Vector2D &Vector2D::Add(const Vector2D &vec)
 {
     this->x += vec.x;

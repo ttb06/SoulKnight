@@ -1,4 +1,4 @@
-#pragma once;
+#pragma once
 
 #include <iostream>
 
@@ -13,6 +13,8 @@ public:
     ~Vector2D();
 
     double len();
+    double getAngleRadians();
+    double getAngleDegrees();
 
     Vector2D &Add(const Vector2D &vec);
     Vector2D &Subtract(const Vector2D &vec);

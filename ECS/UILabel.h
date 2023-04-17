@@ -23,7 +23,10 @@ public:
         SetLabelText(labelText, labelFont);
     }
 
-    ~UILabel() {}
+    ~UILabel() 
+    {
+
+    }
 
     void SetLabelText(std::string text, std::string font)
     {
@@ -37,7 +40,11 @@ public:
     void draw() override
     {
         SDL_RenderCopy(Game::renderer, labelTexture, nullptr, &position);
+    }
 
+    void deleteTexture()
+    {
+        SDL_DestroyTexture(labelTexture);
     }
 
 private:

@@ -104,30 +104,24 @@ public:
 
     void getDamage(int dam)
     {
-        if (isMain)
+        Uint32 time = SDL_GetTicks();
+        if (time - lastDameTakenTime > 1000)
         {
-            Uint32 time = SDL_GetTicks();
-            if (time - lastDameTakenTime > 1000)
+            if (curArmor > 0)
             {
-                if (curArmor > 0)
-                {
-                    curArmor -= dam;
-                    curArmor = std::max(curArmor, 0);
-                }
-                else
-                {
-                    curHealth -= dam;
-                    curHealth = std::max(curHealth, 0);
-                }
-                if (sprite->hasHitAnim)
-                    sprite->Play("Hit");
-
-                lastDameTakenTime = time;
+                curArmor -= dam;
+                curArmor = std::max(curArmor, 0);
             }
-        }
-        else
-        {
-            curHealth -= dam;
+            else
+            {
+                curHealth -= dam;
+                curHealth = std::max(curHealth, 0);
+            }
+
+            if (sprite->hasHitAnim)
+                sprite->Play("Hit");
+
+            lastDameTakenTime = time;
         }
     }
 };

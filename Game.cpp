@@ -31,6 +31,14 @@ Game::Game() {}
 
 Game::~Game() {}
 
+// add Groups
+std::vector<Entity *> &tiles(manager.getGroup(Game::groupMap));
+std::vector<Entity *> &players(manager.getGroup(Game::groupPlayers));
+std::vector<Entity *> &colliders(manager.getGroup(Game::groupColliders));
+std::vector<Entity *> &projectiles(manager.getGroup(Game::groupProjectiles));
+std::vector<Entity *> &enermies(manager.getGroup(Game::groupEnermies));
+std::vector<Entity *> &weapons(manager.getGroup(Game::groupWeapons));
+
 void Game::init(const char *title, int xPos, int yPos, int width, int height, bool fullScreen)
 {
     int flags = 0;
@@ -81,13 +89,15 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     map->LoadMap("assets/map_demo_30x30.map", 30, 30);
 
     player.addComponent<TransformComponent>(301, 301, 16, 28, 3, 5);
+    player.addComponent<DirectionComponent>();
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
     player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), true);
     player.addGroup(groupPlayers);
 
-    weapon.addComponent<WeaponComponent>("anime_sword", 12, 30, 3);
+    weapon.addComponent<DirectionComponent>();
+    weapon.addComponent<WeaponComponent>("anime_sword", 30, 12, 2);
     weapon.addGroup(Game::groupWeapons);
 
     SDL_Color white = {255, 255, 255, 255};
@@ -104,13 +114,6 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
 }
-
-auto &tiles(manager.getGroup(Game::groupMap));
-auto &players(manager.getGroup(Game::groupPlayers));
-auto &colliders(manager.getGroup(Game::groupColliders));
-auto &projectiles(manager.getGroup(Game::groupProjectiles));
-auto &enermies(manager.getGroup(Game::groupEnermies));
-auto &weapons(manager.getGroup(Game::groupWeapons));
 
 void Game::handleEvents()
 {
@@ -132,8 +135,10 @@ void Game::handleEvents()
 void Game::update()
 {
     // store old information
-    if (player.getComponent<HUDComponent>().curHealth <= 0)
+    if (player.getComponent<HUDComponent>().curHealth <= 0){
         Game::isRunning = false;
+    std::cout << "[Game.cpp]: Running out of health" << std::endl;
+    }
 
     SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
     Vector2D playerPos = player.getComponent<TransformComponent>().position;
@@ -145,6 +150,7 @@ void Game::update()
 
     std::stringstream ss;
     ss << "Player Position: " << playerPos;
+    label.getComponent<UILabel>().deleteTexture();
     label.getComponent<UILabel>().SetLabelText(ss.str(), "candara");
 
     for (auto &c : colliders)
@@ -237,12 +243,11 @@ void Game::render()
             p->draw();
     }
 
-    for (auto&w : weapons)
+    for (auto &w : weapons)
     {
         w->draw();
     }
-    // SDL_Rect src = {0, 0, 12, 30}, dest = {(int)player.getComponent<TransformComponent>().position.x - camera.x, (int)player.getComponent<TransformComponent>().position.y -camera.y, 12, 30};
-    // TextureManager::Draw(Game::assets->GetTexture("anime_sword"), src, dest, SDL_FLIP_NONE);
+
     label.draw();
 
     SDL_RenderPresent(renderer);
