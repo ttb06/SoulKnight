@@ -38,6 +38,7 @@ std::vector<Entity *> &colliders(manager.getGroup(Game::groupColliders));
 std::vector<Entity *> &projectiles(manager.getGroup(Game::groupProjectiles));
 std::vector<Entity *> &enermies(manager.getGroup(Game::groupEnermies));
 std::vector<Entity *> &weapons(manager.getGroup(Game::groupWeapons));
+std::vector<Entity *> &highertiles(manager.getGroup(Game::groupHigherMap));
 
 void Game::init(const char *title, int xPos, int yPos, int width, int height, bool fullScreen)
 {
@@ -74,19 +75,19 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     // assets implenemtation
 
     // add Texture
-    assets->AddTexture("terrain", "assets/tiles_assets.png");
+    assets->AddTexture("terrain", "assets/multi_layer_map_tiles.png");
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
     assets->AddTexture("big_demon", "assets/big_demon_amins.png");
     assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
 
     // add Font
-    assets->AddFont("candara", "assets/candara.ttf", 16);
+    assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
 
     map = new Map("terrain", 3, 16);
 
     // esc implementation
-    map->LoadMap("assets/map_demo_30x30.map", 30, 30);
+    map->LoadMap("assets/multi_layer_map.map", 10, 10);
 
     player.addComponent<TransformComponent>(301, 301, 16, 28, 3, 5);
     player.addComponent<DirectionComponent>();
@@ -102,7 +103,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     SDL_Color white = {255, 255, 255, 255};
 
-    label.addComponent<UILabel>(10, 10, "Init", "candara", white);
+    label.addComponent<UILabel>(10, 10, "Init", "DungeonFont", white);
 
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 1), 200, 1, "projectile");
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 1, "projectile");
@@ -208,46 +209,60 @@ void Game::update()
 void Game::render()
 {
     SDL_RenderClear(renderer);
+
+    //render map (floor, things which are always behind player)
     for (auto &t : tiles)
     {
         // if (Collision::AABB(camera, t->getComponent<ColliderComponent>().collider))
         t->draw();
     }
 
+    //render colliders
     for (auto &c : colliders)
     {
-        if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+        // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
             c->draw();
     }
 
+    //render enermies which are behind player
     for (auto &e : enermies)
     {
         if (!Collision::isFront(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
             e->draw();
     }
 
+    //render player
     for (auto &p : players)
     {
         p->draw();
     }
 
+    //render player's weapons
+    for (auto &w : weapons)
+    {
+        w->draw();
+    }
+
+    //render enermies which are in front of player
     for (auto &e : enermies)
     {
         if (Collision::isFront(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
             e->draw();
     }
 
+    //render projectiles
     for (auto &p : projectiles)
     {
         if (Collision::AABB(camera, p->getComponent<ColliderComponent>().collider))
             p->draw();
     }
 
-    for (auto &w : weapons)
+    //render wall in front of player
+    for (auto &t : highertiles)
     {
-        w->draw();
+        t->draw();
     }
-
+    
     label.draw();
 
     SDL_RenderPresent(renderer);

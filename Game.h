@@ -31,6 +31,7 @@ public:
     enum groupLabels : std::size_t
     {
         groupMap,
+        groupHigherMap,
         groupPlayers,
         groupColliders,
         groupProjectiles,

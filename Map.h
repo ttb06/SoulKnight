@@ -9,6 +9,7 @@ public:
 
     void LoadMap(std::string path, int sizeX, int sizeY);
     void AddTile(int srcX, int srcY, int xPos, int yPos);
+    void AddHigherTile(int srcX, int srcY, int xPos, int yPos);
 
 private:
     std::string texID;
