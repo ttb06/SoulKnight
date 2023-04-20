@@ -27,7 +27,8 @@ public:
     static bool isRunning;
     static SDL_Rect camera;
     static AssetManager *assets;
-
+    static int total_scale;
+    
     enum groupLabels : std::size_t
     {
         groupMap,

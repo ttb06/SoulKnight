@@ -15,7 +15,6 @@ extern std::vector<Entity *> &enermies;
 class DirectionComponent : public Component
 {
 private:
-
 public:
     double angle;
     Vector2D vec;
@@ -38,8 +37,8 @@ public:
         vec = Vector2D(1e9, 1e9);
         for (auto &e : enermies)
         {
-            curVec.x = e->getComponent<TransformComponent>().position.x - player.getComponent<TransformComponent>().position.x;
-            curVec.y = e->getComponent<TransformComponent>().position.y - player.getComponent<TransformComponent>().position.y;
+            curVec.x = e->getComponent<TransformComponent>().position.x + e->getComponent<TransformComponent>().width / 2 - player.getComponent<TransformComponent>().position.x;
+            curVec.y = e->getComponent<TransformComponent>().position.y + e->getComponent<TransformComponent>().height / 2 - player.getComponent<TransformComponent>().position.y;
             if (vec.len() > curVec.len())
             {
                 vec = curVec;
@@ -48,14 +47,14 @@ public:
                     flip = SDL_FLIP_NONE;
                 else
                     flip = SDL_FLIP_HORIZONTAL;
-                
+
                 if (flip == SDL_FLIP_HORIZONTAL)
                 {
                     angle = 0 - angle;
                 }
             }
         }
-        std::cout << "[DirectionComponent.h]: vec: " << vec << ", angle: " << angle << std::endl;
+        // std::cout << "[DirectionComponent.h]: vec: " << vec << ", angle: " << angle << std::endl;
     }
 
     void draw() override

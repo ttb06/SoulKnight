@@ -16,6 +16,7 @@ Manager manager;
 
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
+int Game::total_scale = 3;
 
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
@@ -73,23 +74,22 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     }
 
     // assets implenemtation
-
     // add Texture
-    assets->AddTexture("terrain", "assets/multi_layer_map_tiles.png");
+    assets->AddTexture("terrain", "assets/tiles_assets_final.png");
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
     assets->AddTexture("big_demon", "assets/big_demon_amins.png");
-    assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
+    assets->AddTexture("anme_sword", "assets/weapon_anime_sword.png");
 
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
 
-    map = new Map("terrain", 3, 16);
+    map = new Map("terrain", Game::total_scale, 16);
 
     // esc implementation
-    map->LoadMap("assets/multi_layer_map.map", 10, 10);
+    map->LoadMap("assets/map_final.txt", 60, 60);
 
-    player.addComponent<TransformComponent>(301, 301, 16, 28, 3, 5);
+    player.addComponent<TransformComponent>(400, 400, 16, 28, Game::total_scale, 5);
     player.addComponent<DirectionComponent>();
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
@@ -98,7 +98,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addGroup(groupPlayers);
 
     weapon.addComponent<DirectionComponent>();
-    weapon.addComponent<WeaponComponent>("anime_sword", 30, 12, 2);
+    weapon.addComponent<WeaponComponent>("anime_sword", 30, 12, Game::total_scale);
     weapon.addGroup(Game::groupWeapons);
 
     SDL_Color white = {255, 255, 255, 255};
@@ -136,9 +136,10 @@ void Game::handleEvents()
 void Game::update()
 {
     // store old information
-    if (player.getComponent<HUDComponent>().curHealth <= 0){
+    if (player.getComponent<HUDComponent>().curHealth <= 0)
+    {
         Game::isRunning = false;
-    std::cout << "[Game.cpp]: Running out of health" << std::endl;
+        std::cout << "[Game.cpp]: Running out of health" << std::endl;
     }
 
     SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
@@ -193,8 +194,8 @@ void Game::update()
 
     // camera.x = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2 ;
     // camera.y = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2;
-    camera.x = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2 + player.getComponent<TransformComponent>().width / 2;
-    camera.y = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2 + player.getComponent<TransformComponent>().height / 2;
+    camera.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 - camera.w / 2;
+    camera.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2 - camera.h / 2;
 
     if (camera.x < 0)
         camera.x = 0;
@@ -202,67 +203,69 @@ void Game::update()
         camera.y = 0;
     if (camera.x > LEVEL_WIDTH - camera.w)
         camera.x = LEVEL_WIDTH - camera.w;
-    if (camera.y > camera.h)
-        camera.y = LEVEL_HEIGHT - camera.w;
+    if (camera.y > LEVEL_HEIGHT - camera.h)
+        camera.y = LEVEL_HEIGHT - camera.h;
+
+    cout << "Camera: " << camera.x << " " << camera.y << " " << camera.w << " " << camera.h << endl
+         << "playerPos:" << playerPos << endl;
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
 
-    //render map (floor, things which are always behind player)
+    // render map (floor, things which are always behind player)
     for (auto &t : tiles)
     {
-        // if (Collision::AABB(camera, t->getComponent<ColliderComponent>().collider))
         t->draw();
     }
 
-    //render colliders
-    for (auto &c : colliders)
-    {
-        // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
-            c->draw();
-    }
-
-    //render enermies which are behind player
+    // render enermies which are behind player
     for (auto &e : enermies)
     {
         if (!Collision::isFront(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
             e->draw();
     }
 
-    //render player
+    // render player
     for (auto &p : players)
     {
         p->draw();
     }
 
-    //render player's weapons
+    // render player's weapons
     for (auto &w : weapons)
     {
         w->draw();
     }
 
-    //render enermies which are in front of player
+    // render enermies which are in front of player
     for (auto &e : enermies)
     {
         if (Collision::isFront(e->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
             e->draw();
     }
 
-    //render projectiles
+    // render projectiles
     for (auto &p : projectiles)
     {
         if (Collision::AABB(camera, p->getComponent<ColliderComponent>().collider))
             p->draw();
     }
 
-    //render wall in front of player
+    // render wall in front of player
     for (auto &t : highertiles)
     {
         t->draw();
     }
-    
+
+    // render colliders
+    for (auto &c : colliders)
+    {
+        // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+        c->draw();
+    }
+
     label.draw();
 
     SDL_RenderPresent(renderer);

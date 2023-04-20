@@ -15,8 +15,11 @@ private:
     DirectionComponent dir;
     SDL_Texture *tex;
     ColliderComponent *range;
-    SDL_Rect src, dest;
     int scale;
+
+    SDL_Rect src, dest;
+    SDL_Point center;
+    double angle;
 
 public:
     WeaponComponent(std::string id, int width, int height, int scl)
@@ -43,20 +46,25 @@ public:
     {
         transform = player.getComponent<TransformComponent>();
         dir = player.getComponent<DirectionComponent>();
-        double angle = dir.angle;
-        SDL_Point center = {0, src.h/2};
-        dest = {(int)transform.position.x - Game::camera.x, (int)transform.position.y - Game::camera.y, src.w * scale, src.h * scale};
-        
+        angle = dir.angle;
+        center = {0, dest.h / 2};
+        dest = {(int)transform.position.x - Game::camera.x + transform.width * transform.scale/2, (int)transform.position.y - Game::camera.y + transform.height * transform.scale/2, src.w * scale, src.h * scale};
+
         if (dir.flip == SDL_FLIP_HORIZONTAL)
         {
-            center = {src.w, src.h/2};
-            dest.x -= src.w;
-            dest.y -= src.h;
+
+            dest.x -= dest.w;
+            dest.y -= dest.h;
+            center = {dest.w, dest.h / 2};
         }
 
-        // double angle = player.getComponent<DirectionComponent>().angle;
-        // src = {0, 0, 12, 30};
-        TextureManager::DrawAngle(tex, src, dest, dir.flip, center, angle);
+        SDL_Rect newDest = dest;
+        if (dir.flip == SDL_FLIP_HORIZONTAL)
+        {
+            newDest.y += dest.h;
+        }
+
+        TextureManager::DrawAngle(tex, src, newDest, dir.flip, center, angle);
         // std::cout << "[WeaponComponent.h]: Weapon position: " << dest.x << " " << dest.y << std::endl;
     }
 };
