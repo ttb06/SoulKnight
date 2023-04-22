@@ -28,5 +28,5 @@ void TextureManager::drawRect(int xPos, int yPos, int width, int height, SDL_Col
 
 void TextureManager::DrawAngle(SDL_Texture *tex, SDL_Rect src, SDL_Rect dest, SDL_RendererFlip flip, SDL_Point center, double angle)
 {
-        SDL_RenderCopyEx(Game::renderer, tex, &src, &dest, angle, &center, flip);    
+    SDL_RenderCopyEx(Game::renderer, tex, &src, &dest, angle, &center, flip);    
 }

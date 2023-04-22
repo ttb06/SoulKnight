@@ -12,3 +12,5 @@
 #include "UILabel.h"
 #include "EnermyComponent.h"
 #include "WeaponComponent.h"
+#include "WeaponSpriteComponent.h"
+#include "WeaponKeyboardController.h"

@@ -38,7 +38,7 @@ public:
 
         // std::cout<< "[EnermyComponent.h]: distance to player: " << wayToPlayer.len() << std::endl;
 
-        if (wayToPlayer.len() > 500)
+        if (wayToPlayer.len() > 500 * Game::total_scale)
         {
             entity->getComponent<TransformComponent>().velocity.Zero();
         }

@@ -5,6 +5,7 @@
 #include "Vector2D.h"
 #include "Collision.h"
 #include "AssetManager.h"
+// #include "Timer.h"
 
 #include <sstream>
 
@@ -17,6 +18,8 @@ Manager manager;
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 int Game::total_scale = 3;
+
+// LTimer Game::timer;
 
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
@@ -79,7 +82,8 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
     assets->AddTexture("big_demon", "assets/big_demon_amins.png");
-    assets->AddTexture("anme_sword", "assets/weapon_anime_sword.png");
+    assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
+    assets->AddTexture("katana", "assets/katana_slash.png");
 
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
@@ -98,7 +102,9 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addGroup(groupPlayers);
 
     weapon.addComponent<DirectionComponent>();
-    weapon.addComponent<WeaponComponent>("anime_sword", 30, 12, Game::total_scale);
+    weapon.addComponent<WeaponComponent>("katana", 29, 6, Game::total_scale);
+    weapon.addComponent<WeaponSpriteComponent>("katana", 29, 6, Game::total_scale);
+    weapon.addComponent<WeaponKeyboardController>();
     weapon.addGroup(Game::groupWeapons);
 
     SDL_Color white = {255, 255, 255, 255};
@@ -114,6 +120,9 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
     assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
+
+    // start timer
+    //  Game::timer.start();
 }
 
 void Game::handleEvents()
@@ -192,6 +201,16 @@ void Game::update()
         }
     }
 
+    for (auto&e:enermies)
+    {
+        SDL_Rect weaponCollider = weapon.getComponent<WeaponSpriteComponent>().destRect;
+        if (weapon.getComponent<WeaponComponent>().isAtacking && 
+        (Collision::AABB(e->getComponent<ColliderComponent>().collider, weaponCollider)) )
+        {
+            e->destroy();
+        }
+    }
+
     // camera.x = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2 ;
     // camera.y = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2;
     camera.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 - camera.w / 2;
@@ -205,9 +224,6 @@ void Game::update()
         camera.x = LEVEL_WIDTH - camera.w;
     if (camera.y > LEVEL_HEIGHT - camera.h)
         camera.y = LEVEL_HEIGHT - camera.h;
-
-    cout << "Camera: " << camera.x << " " << camera.y << " " << camera.w << " " << camera.h << endl
-         << "playerPos:" << playerPos << endl;
 }
 
 void Game::render()

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 
+// class LTimer;
 class ColliderComponent;
 class AssetManager;
 
@@ -28,6 +29,7 @@ public:
     static SDL_Rect camera;
     static AssetManager *assets;
     static int total_scale;
+    // static LTimer timer;
     
     enum groupLabels : std::size_t
     {
