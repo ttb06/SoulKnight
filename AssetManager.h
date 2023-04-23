@@ -16,6 +16,7 @@ public:
 
     void CreatProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id);
     void CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD);
+    void AddSkull(int xPos, int yPos, std::string id);
 
     // Texture management
     void AddTexture(std::string id, const char *path);

@@ -15,13 +15,14 @@ private:
     SpriteComponent *sprite;
     Vector2D pos;
     bool isDead = false;
-    bool isMain = false;
 
 public:
     int maxHealth;
     int curHealth;
     int maxArmor;
     int curArmor;
+    int attackDamage = 0;
+
     Uint32 lastDameTakenTime = 0;
 
     HUDComponent(){};
@@ -46,9 +47,9 @@ public:
         sprite = &entity->getComponent<SpriteComponent>();
     };
 
-    HUDComponent(int mh, int a, Vector2D _pos, bool iM)
+    HUDComponent(int mh, int a, Vector2D _pos, int dam)
     {
-        isMain = iM;
+        attackDamage = dam;
         pos = _pos;
         maxHealth = mh;
         curHealth = mh;
@@ -80,9 +81,6 @@ public:
 
     void draw() override
     {
-        if (isMain)
-        {
-            // set color
             SDL_Color curHealthColor = {222, 58, 57, 255}, maxHealthColor = {106, 80, 55, 255};
             SDL_Color curArmorColor = {141, 141, 141, 255}, maxArmorColor = {106, 80, 55, 255};
             SDL_Color HUDBar = {107, 79, 56, 255};
@@ -96,10 +94,7 @@ public:
             TextureManager::drawRect(xPos + 10, yPos + 10, 32 * sizeBar * curHealth / maxHealth, 32, curHealthColor);
             TextureManager::drawRect(xPos + 10, yPos + 100, 32 * sizeBar, 32, maxArmorColor);
             TextureManager::drawRect(xPos + 10, yPos + 100, 32 * sizeBar * curArmor / maxArmor, 32, curArmorColor);
-        }
-        else
-        {
-        }
+       
     }
 
     void getDamage(int dam)

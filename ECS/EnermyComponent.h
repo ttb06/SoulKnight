@@ -13,6 +13,8 @@ public:
     int maxHealth, curHealth;
     int collisionDamage = 0;
     Vector2D wayToPlayer;
+    int lastTakenDamage = -1;
+    SpriteComponent *sprite;
 
     EnermyComponent(int mH, int cD = 0)
     {
@@ -29,6 +31,21 @@ public:
         {
             entity->addComponent<TransformComponent>();
         }
+        if (!entity->hasComponent<SpriteComponent>())
+        {
+            entity->addComponent<SpriteComponent>();
+        }
+        sprite = &entity->getComponent<SpriteComponent>();
+    }
+
+    void takeDamage(int dame)
+    {
+        curHealth -= dame;
+        if (curHealth <= 0)
+        {
+            entity->destroy();
+            Game::assets->AddSkull(entity->getComponent<TransformComponent>().position.x, entity->getComponent<TransformComponent>().position.y, "skull");
+        }
     }
 
     void update() override
@@ -36,9 +53,8 @@ public:
         wayToPlayer.x = player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x;
         wayToPlayer.y = player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y;
 
-        // std::cout<< "[EnermyComponent.h]: distance to player: " << wayToPlayer.len() << std::endl;
 
-        if (wayToPlayer.len() > 500 * Game::total_scale)
+        if (wayToPlayer.len() > 12 * 16 * Game::total_scale)// len to detect player
         {
             entity->getComponent<TransformComponent>().velocity.Zero();
         }
@@ -51,14 +67,14 @@ public:
             entity->getComponent<TransformComponent>().velocity.y = cosA;
         }
 
-        // if (entity->getComponent<TransformComponent>().velocity.x != 0 ||
-        //     entity->getComponent<TransformComponent>().velocity.y != 0)
+        // if (entity->getComponent<TransformComponent>().velocity.len() != 0)
         // {
-        //     entity->getComponent<SpriteComponent>().Play("Run");
+        //     entity->getComponent<SpriteComponent>().Play("Ru");
+        //     // sprite->Play("Idle");
         // }
         // else
         // {
-        //     entity->getComponent<SpriteComponent>().Play("Idle");
+        //     sprite->Play("Idle");
         // }
     }
 };

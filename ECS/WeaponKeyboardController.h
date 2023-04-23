@@ -20,7 +20,6 @@ public:
 
     void update() override
     {
-        std::cout << weapon->attackCounter << std::endl;
         if (Game::event.type == SDL_KEYDOWN)
         {
             switch (Game::event.key.keysym.sym)

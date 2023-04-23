@@ -30,6 +30,13 @@ void AssetManager::CreateEnermy(Vector2D pos, int spd, int width, int height, st
     enermy.addGroup(Game::groupEnermies);
 }
 
+void AssetManager::AddSkull(int xPos, int yPos, std::string id)
+{
+    auto &skull(manager->addEntity());
+    skull.addComponent<TileComponent>(0, 0, xPos, yPos, 16, Game::total_scale, id);
+    skull.addGroup(Game::groupMap);
+}
+
 void AssetManager::AddTexture(std::string id, const char *path)
 {
     textures.emplace(id, TextureManager::loadTexture(path));

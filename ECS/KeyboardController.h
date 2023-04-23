@@ -34,7 +34,7 @@ public:
             case SDLK_LEFT:
                 transform->velocity.x = -1;
                 sprite->Play("Run");
-                // sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
+                sprite->spriteFlip = SDL_FLIP_HORIZONTAL;
                 break;
             case SDLK_s:
             case SDLK_DOWN:
@@ -45,14 +45,17 @@ public:
             case SDLK_RIGHT:
                 transform->velocity.x = 1;
                 sprite->Play("Run");
-                // sprite->spriteFlip = SDL_FLIP_NONE;
+                sprite->spriteFlip = SDL_FLIP_NONE;
                 break;
             }
 
             DirectionComponent dir;
             dir = player.getComponent<DirectionComponent>();
 
-            sprite->spriteFlip = dir.flip;
+            if (dir.vec.len() < 16 * Game::total_scale * 5 &&dir.vec.len() >0)
+            {
+                sprite->spriteFlip = dir.flip;
+            }
 
             if (abs(transform->velocity.x) == 1 && abs(transform->velocity.y) != 0)
             {

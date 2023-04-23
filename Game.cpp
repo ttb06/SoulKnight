@@ -83,8 +83,8 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("projectile", "assets/proj.png");
     assets->AddTexture("big_demon", "assets/big_demon_amins.png");
     assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
-    assets->AddTexture("katana", "assets/katana_slash.png");
-
+    assets->AddTexture("katana", "assets/test.png");
+    assets->AddTexture("skull", "assets/skull.png");
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
 
@@ -98,7 +98,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player");
-    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), true);
+    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), 2);
     player.addGroup(groupPlayers);
 
     weapon.addComponent<DirectionComponent>();
@@ -120,9 +120,13 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
     assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
-
-    // start timer
-    //  Game::timer.start();
+    for (int i = 300; i < 1000; i += 100)
+    {
+        for (int j = 300; j < 1000; j += 100)
+        {
+            assets->CreateEnermy(Vector2D(i, j), 1, 32, 36, "big_demon", 7, 1);
+        }
+    }
 }
 
 void Game::handleEvents()
@@ -197,22 +201,40 @@ void Game::update()
         {
             p->destroy();
             std::cout << "[Game.cpp]: Hit player" << std::endl;
-            // player.getComponent<HUDComponent>().getDamage(1);
         }
     }
 
-    for (auto&e:enermies)
+    for (auto &e : enermies)
     {
-        SDL_Rect weaponCollider = weapon.getComponent<WeaponSpriteComponent>().destRect;
-        if (weapon.getComponent<WeaponComponent>().isAtacking && 
-        (Collision::AABB(e->getComponent<ColliderComponent>().collider, weaponCollider)) )
+
+        SDL_Rect weaponCollider;
+        weaponCollider.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2;
+        weaponCollider.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2;
+        double scl = 0;
+
+        weaponCollider.w = (int)abs(weapon.getComponent<DirectionComponent>().vec.x);
+        weaponCollider.h = (int)abs(weapon.getComponent<DirectionComponent>().vec.y);
+
+        if (weapon.getComponent<DirectionComponent>().vec.x < 0)
         {
-            e->destroy();
+            weaponCollider.x -= weaponCollider.w;
+        }
+
+        if (weapon.getComponent<DirectionComponent>().vec.y < 0)
+        {
+            weaponCollider.y -= weaponCollider.h;
+        }
+
+        if (weapon.getComponent<WeaponComponent>().isAtacking &&
+            weapon.getComponent<WeaponComponent>().attackCounter != e->getComponent<EnermyComponent>().lastTakenDamage &&
+            (Collision::AABB(e->getComponent<ColliderComponent>().collider, weaponCollider)))
+        {
+            std::cout << e->getComponent<EnermyComponent>().curHealth;
+            e->getComponent<EnermyComponent>().lastTakenDamage = weapon.getComponent<WeaponComponent>().attackCounter;
+            e->getComponent<EnermyComponent>().takeDamage(player.getComponent<HUDComponent>().attackDamage);
         }
     }
 
-    // camera.x = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2 ;
-    // camera.y = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2;
     camera.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 - camera.w / 2;
     camera.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2 - camera.h / 2;
 
@@ -281,6 +303,7 @@ void Game::render()
         // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
         c->draw();
     }
+
 
     label.draw();
 

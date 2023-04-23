@@ -34,11 +34,7 @@ public:
     {
         scale = scl;
 
-        // tex = Game::assets->GetTexture(id);
-
         src = {0, 0, width, height};
-        // range->collider.x = transform->position.x + 5;
-        // range->collider.y = transform->position.y + 5;
     }
 
     ~WeaponComponent(){};
@@ -47,20 +43,26 @@ public:
     {
     }
 
+
     void update() override
     {
         transform = player.getComponent<TransformComponent>();
         dir = player.getComponent<DirectionComponent>();
+        if (dir.vec.x == 1e9 && dir.vec.y == 1e9)//no enermies
+        {
+            dir.vec = player.getComponent<TransformComponent>().velocity;
+            dir.update();
+        }
         angle = dir.angle;
 
-        center = {0, dest.h / 2};
+        center = {0 + 5, dest.h / 2};
         dest = {(int)transform.position.x - Game::camera.x + transform.width * transform.scale / 2, (int)transform.position.y - Game::camera.y + transform.height * transform.scale / 3 * 2, src.w * scale, src.h * scale};
 
         if (dir.flip == SDL_FLIP_HORIZONTAL)
         {
             dest.x -= dest.w;
             dest.y -= dest.h;
-            center = {dest.w, dest.h / 2};
+            center = {dest.w + 5, dest.h / 2};
         }
 
         if (dir.flip == SDL_FLIP_HORIZONTAL)
@@ -72,7 +74,5 @@ public:
 
     void draw() override
     {
-        // TextureManager::DrawAngle(tex, src, dest, dir.flip, center, angle);
-        // std::cout << "[WeaponComponent.h]: Weapon position: " << dest.x << " " << dest.y << std::endl;
     }
 };

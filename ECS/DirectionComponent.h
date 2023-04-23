@@ -7,6 +7,7 @@
 #include "math.h"
 
 extern Entity &player;
+extern Entity &weapon;
 // // extern Manager manager;
 
 extern std::vector<Entity *> &enermies;
@@ -42,6 +43,23 @@ public:
             if (vec.len() > curVec.len())
             {
                 vec = curVec;
+                angle = vec.getAngleDegrees();
+                if (vec.x >= 0)
+                    flip = SDL_FLIP_NONE;
+                else
+                    flip = SDL_FLIP_HORIZONTAL;
+
+                if (flip == SDL_FLIP_HORIZONTAL)
+                {
+                    angle = 0 - angle;
+                }
+            }
+        }
+        if (vec.x == 1e9 && vec.y == 1e9)
+        {
+            vec = player.getComponent<TransformComponent>().velocity;
+            if (vec.len() > 0)
+            {
                 angle = vec.getAngleDegrees();
                 if (vec.x >= 0)
                     flip = SDL_FLIP_NONE;
