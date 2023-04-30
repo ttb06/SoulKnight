@@ -35,7 +35,7 @@ public:
         weaponRect = {0, 60 - height, width, height};
 
         Animation idle = Animation(0, 1, 100);
-        Animation hit = Animation(1, 6, 30);
+        Animation hit = Animation(1, 6, 50);
 
         animations.emplace("Idle", idle);
         animations.emplace("Hit", hit);
@@ -83,12 +83,6 @@ public:
         // destRect.x = weapon.dest.x;
         // destRect.y = weapon.dest.y;
 
-        if (player.getComponent<DirectionComponent>().vec.len() > 16 * Game::total_scale * 5)
-        {
-            // weapon.dir.vec = player.getComponent<TransformComponent>().velocity;
-            // weapon.update();
-        }
-        
         if (animIndex == 0)
         {
             srcRect = weaponRect;
@@ -119,6 +113,15 @@ public:
             destRect.y -= 90;
         }
 
+        if (weapon.attackCounter % 2 == 0)
+            if (weapon.dir.flip == SDL_FLIP_HORIZONTAL)
+            {
+                weapon.dir.flip = (SDL_RendererFlip)(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
+                
+            }
+            else
+                weapon.dir.flip = SDL_FLIP_VERTICAL;
+
         // if (player.getComponent<DirectionComponent>().vec.len() > 16 * Game::total_scale * 5)
         // {
         //     weapon.dir.flip = player.getComponent<SpriteComponent>().spriteFlip;
@@ -128,7 +131,6 @@ public:
         //         std::cout << weapon.angle << std::endl;
         //     }
         // }
-
     }
 
     void draw() override

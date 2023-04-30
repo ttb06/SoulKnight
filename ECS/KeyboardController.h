@@ -52,7 +52,7 @@ public:
             DirectionComponent dir;
             dir = player.getComponent<DirectionComponent>();
 
-            if (dir.vec.len() < 16 * Game::total_scale * 5 &&dir.vec.len() >0)
+            if (dir.vec.len() < 16 * Game::total_scale * 5 &&dir.vec.len() > 0)
             {
                 sprite->spriteFlip = dir.flip;
             }

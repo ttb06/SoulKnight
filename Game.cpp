@@ -120,13 +120,10 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
     assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
-    for (int i = 300; i < 1000; i += 100)
-    {
-        for (int j = 300; j < 1000; j += 100)
-        {
-            assets->CreateEnermy(Vector2D(i, j), 1, 32, 36, "big_demon", 7, 1);
-        }
-    }
+    assets->CreateEnermy(Vector2D(2000, 2000), 1, 32, 36, "big_demon", 7, 1);
+    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
+    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
+    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
 }
 
 void Game::handleEvents()
@@ -171,17 +168,30 @@ void Game::update()
     for (auto &c : colliders)
     {
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
-        if (Collision::AABB(playerCol, cCol))
+        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
         {
             std::cout << "[Game.cpp]: Player hit collider" << std::endl;
             player.getComponent<TransformComponent>().position.x -= playerVel.x * playerSpeed;
-            player.getComponent<TransformComponent>().position.y -= playerVel.y * playerSpeed;
-
-            if (player.getComponent<TransformComponent>().position.x == playerPos.x &&
-                player.getComponent<TransformComponent>().position.y == playerPos.y)
+            player.getComponent<ColliderComponent>().update();
+            if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
             {
-                std::cout << "[Game.cpp]: Player returned to the old position" << std::endl;
+                player.getComponent<TransformComponent>().position.x += playerVel.x * playerSpeed;
             }
+
+            player.getComponent<TransformComponent>().position.y -= playerVel.y * playerSpeed;
+            player.getComponent<ColliderComponent>().update();
+            if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
+            {
+                player.getComponent<TransformComponent>().position.y += playerVel.y * playerSpeed;
+            }
+            
+            player.getComponent<ColliderComponent>().update();
+
+            // if (player.getComponent<TransformComponent>().position.x == playerPos.x &&
+            //     player.getComponent<TransformComponent>().position.y == playerPos.y)
+            // {
+            //     std::cout << "[Game.cpp]: Player returned to the old position" << std::endl;
+            // }
             break;
         }
     }
@@ -235,8 +245,16 @@ void Game::update()
         }
     }
 
-    camera.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 - camera.w / 2;
-    camera.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2 - camera.h / 2;
+    float newXposCam;
+    float newYposCam;
+
+    newXposCam = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2;
+    newYposCam = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2;
+
+    // camera.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 - camera.w / 2;
+    // camera.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2 - camera.h / 2;
+    camera.x = camera.x + (newXposCam - camera.x) * SMOOTHING_FACTOR;
+    camera.y = camera.y + (newYposCam - camera.y) * SMOOTHING_FACTOR;
 
     if (camera.x < 0)
         camera.x = 0;
@@ -298,12 +316,11 @@ void Game::render()
     }
 
     // render colliders
-    for (auto &c : colliders)
-    {
-        // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
-        c->draw();
-    }
-
+    // for (auto &c : colliders)
+    // {
+    //     // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+    //     c->draw();
+    // }
 
     label.draw();
 

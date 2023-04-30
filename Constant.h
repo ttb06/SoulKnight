@@ -8,3 +8,5 @@ const int frameDelay = 1000/FPS;
 
 const int LEVEL_WIDTH = 16000;
 const int LEVEL_HEIGHT = 16000;
+
+const float SMOOTHING_FACTOR = 0.05;

@@ -55,7 +55,8 @@ public:
                 }
             }
         }
-        if (vec.x == 1e9 && vec.y == 1e9)
+
+        if (vec.len() > 16 * Game::total_scale * 5)
         {
             vec = player.getComponent<TransformComponent>().velocity;
             if (vec.len() > 0)
