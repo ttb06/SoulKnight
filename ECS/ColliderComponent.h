@@ -8,8 +8,10 @@
 class ColliderComponent : public Component
 {
 public:
-    SDL_Rect collider;
+    SDL_Rect collider, initCollider;
     std::string tag;
+    bool initedCollider = false;
+    int size;
 
     SDL_Texture *tex;
     SDL_Rect srcR, destR;
@@ -19,15 +21,26 @@ public:
     ColliderComponent(std::string t)
     {
         tag = t;
+        initCollider.x = initCollider.y = 0;
     }
 
-    ColliderComponent(std::string t, int xPos, int yPos, int size)
+    ColliderComponent(std::string t, int xPos, int yPos, int s, bool isPlayer = false)
     {
         tag = t;
-        
-        collider.x = xPos;
-        collider.y = yPos;
-        collider.w = collider.h = size;
+        if (!isPlayer)
+        {
+            collider.x = xPos;
+            collider.y = yPos;
+            collider.w = collider.h = s;
+        }
+        else
+        {
+            initCollider.x = xPos;
+            initCollider.y = yPos;
+            size = s;
+            initCollider.w = initCollider.h = s;
+            initedCollider = true;
+        }
     }
 
     void init() override
@@ -48,10 +61,20 @@ public:
     {
         if (tag != "terrain")
         {
-            collider.x = (int)transform->position.x;
-            collider.y = (int)transform->position.y;
-            collider.w = transform->width * transform->scale;
-            collider.h = transform->height * transform->scale;
+            if (!initedCollider)
+            {
+                collider.x = (int)transform->position.x;
+                collider.y = (int)transform->position.y;
+                collider.w = transform->width * transform->scale;
+                collider.h = transform->height * transform->scale;
+            }
+            else
+            {
+                collider.x = (int)transform->position.x + initCollider.x*transform->scale;
+                collider.y = (int)transform->position.y + initCollider.y*transform->scale;
+                collider.w = size * transform->scale;
+                collider.h = size * transform->scale;
+            }
         }
 
         destR.x = collider.x - Game::camera.x;
@@ -61,5 +84,9 @@ public:
     void draw() override
     {
         TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
+        if (tag == "player")
+        {
+            std::cout << collider.x << " " << collider.y << "    " << collider.w << " " << collider.h << std::endl;
+        }
     }
 };

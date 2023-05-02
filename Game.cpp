@@ -97,7 +97,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addComponent<DirectionComponent>();
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<KeyboardController>();
-    player.addComponent<ColliderComponent>("player");
+    player.addComponent<ColliderComponent>("player", 0, 12, 16, true);
     player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), 2);
     player.addGroup(groupPlayers);
 
@@ -184,7 +184,7 @@ void Game::update()
             {
                 player.getComponent<TransformComponent>().position.y += playerVel.y * playerSpeed;
             }
-            
+
             player.getComponent<ColliderComponent>().update();
 
             // if (player.getComponent<TransformComponent>().position.x == playerPos.x &&
@@ -316,11 +316,11 @@ void Game::render()
     }
 
     // render colliders
-    // for (auto &c : colliders)
-    // {
-    //     // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
-    //     c->draw();
-    // }
+    for (auto &c : colliders)
+    {
+        // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+        c->draw();
+    }
 
     label.draw();
 
