@@ -17,7 +17,7 @@ Vector2D::~Vector2D() {}
 
 double Vector2D::len()
 {
-    return sqrt(x*x + y*y);
+    return sqrt(x * x + y * y);
 }
 
 double Vector2D::getAngleRadians()
@@ -29,6 +29,15 @@ double Vector2D::getAngleRadians()
 double Vector2D::getAngleDegrees()
 {
     return getAngleRadians() * 180 / M_PI;
+}
+
+void Vector2D::normalize()
+{
+    float oldX = x, oldY = y;
+    x /= len();
+    y /= len();
+    if (abs(x - oldX) + abs(y - oldY) < 0.00001)
+        x = oldX, y = oldY;
 }
 
 Vector2D &Vector2D::Add(const Vector2D &vec)

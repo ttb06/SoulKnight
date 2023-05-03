@@ -84,9 +84,5 @@ public:
     void draw() override
     {
         TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
-        if (tag == "player")
-        {
-            std::cout << collider.x << " " << collider.y << "    " << collider.w << " " << collider.h << std::endl;
-        }
     }
 };

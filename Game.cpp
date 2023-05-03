@@ -18,14 +18,15 @@ Manager manager;
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 int Game::total_scale = 3;
-
-// LTimer Game::timer;
+int Game::level = 1;
+int Game::collisionMap[105][105];
 
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
 bool Game::isRunning = false;
 
 AssetManager *Game::assets = new AssetManager(&manager);
+vector<vector<int>> Game::neighbor;
 
 Entity &player(manager.addEntity());
 Entity &label(manager.addEntity());
@@ -269,7 +270,7 @@ void Game::update()
 void Game::render()
 {
     SDL_RenderClear(renderer);
-
+    // player.getComponent<TransformComponent>().moveTo(700, 700);
     // render map (floor, things which are always behind player)
     for (auto &t : tiles)
     {

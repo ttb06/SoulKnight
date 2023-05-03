@@ -82,7 +82,9 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
     }
 
     getline(mapFile, line);
-    // load Collision map
+
+    // load Collision map into Map and Game::collisionMap for path finding with bfs
+    int temp[sizeX * sizeY + 5];
     for (int y = 0; y < sizeY; y++)
     {
         getline(mapFile, line);
@@ -98,7 +100,8 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
                     break;
             }
             cnt++;
-            
+
+            Game::collisionMap[x][y] = atoi(index.c_str());
             if (atoi(index.c_str()) != 0)
             {
                 auto &tCol(manager.addEntity());
@@ -107,6 +110,27 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
             }
         }
     }
+
+    // for (int y = 0; y < sizeY; y++)
+    // {
+    //     for (int x = 0; x < sizeX; x++)
+    //     {
+    //         if (y * sizeX + x - 1 >= 0 && temp[y * sizeX + x - 1] == 0)
+    //             Game::neighbor[y * sizeX + x].push_back(y * sizeX + x - 1);
+            
+    //         if ((y-1) * sizeX + x >= 0 && temp[(y-1) * sizeX + x] == 0)
+    //             Game::neighbor[y * sizeX + x].push_back((y-1) * sizeX + x);
+            
+    //         if ((y+1) * sizeX + x <= sizeX * sizeY - 1 && temp[(y+1) * sizeX + x] == 0)
+    //             Game::neighbor[y * sizeX + x].push_back((y+1) * sizeX + x);
+
+    //         if (y * sizeX + x + 1 <= sizeX * sizeY - 1 && temp[y * sizeX + x + 1] == 0)
+    //             Game::neighbor[y * sizeX + x].push_back(y * sizeX + x + 1);
+            
+    //         // std::cout << temp[y * sizeX + x] << " ";
+    //     }
+    // }
+    // std::cout << Game::neighbor[351][1];
 }
 
 void Map::AddTile(int srcX, int srcY, int xPos, int yPos)

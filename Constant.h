@@ -8,5 +8,6 @@ const int frameDelay = 1000/FPS;
 
 const int LEVEL_WIDTH = 16000;
 const int LEVEL_HEIGHT = 16000;
-
+const int LV1_SIZE_X = 60;//for map 60 x 60
+const int LV1_SIZE_Y = 60;
 const float SMOOTHING_FACTOR = 0.05;

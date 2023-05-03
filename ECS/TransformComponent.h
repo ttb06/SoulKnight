@@ -75,4 +75,12 @@ public:
         position.x = x;
         position.y = y;
     }
+
+    void moveTo (int tx, int ty)
+    {
+        velocity.x = tx - position.x;
+        velocity.y = ty - position.y;
+        velocity.normalize();
+    }
+
 };

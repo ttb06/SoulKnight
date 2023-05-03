@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 
+using std::vector;
 // class LTimer;
 class ColliderComponent;
 class AssetManager;
@@ -23,13 +24,15 @@ public:
     void render();
     void clean();
 
+    static int level;
+    static int collisionMap[105][105];
     static SDL_Renderer *renderer;
     static SDL_Event event;
     static bool isRunning;
     static SDL_Rect camera;
     static AssetManager *assets;
     static int total_scale;
-    // static LTimer timer;
+    static vector<vector<int>> neighbor;
     
     enum groupLabels : std::size_t
     {

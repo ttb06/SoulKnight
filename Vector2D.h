@@ -16,6 +16,8 @@ public:
     double getAngleRadians();
     double getAngleDegrees();
 
+    void normalize();
+
     Vector2D &Add(const Vector2D &vec);
     Vector2D &Subtract(const Vector2D &vec);
     Vector2D &Multiply(const Vector2D &vec);

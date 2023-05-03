@@ -52,7 +52,7 @@ public:
             DirectionComponent dir;
             dir = player.getComponent<DirectionComponent>();
 
-            if (dir.vec.len() < 16 * Game::total_scale * 5 &&dir.vec.len() > 0)
+            if (dir.vec.len() < 16 * Game::total_scale * 5 && dir.vec.len() > 0)
             {
                 sprite->spriteFlip = dir.flip;
             }
@@ -61,7 +61,7 @@ public:
             {
                 transform->velocity.x = transform->velocity.x * sin(M_PI_4);
             }
-            
+
             if (abs(transform->velocity.x) != 0 && abs(transform->velocity.y) == 1)
             {
                 transform->velocity.y = transform->velocity.y * sin(M_PI_4);
@@ -96,6 +96,12 @@ public:
         }
         if (transform->velocity.x == 0 && transform->velocity.y == 0)
             sprite->Play("Idle");
-        // std::cout <<"[KeyboardControler.h]: vel: " << transform->velocity << std::endl;
+
+        else
+        {
+            Vector2D oldVel = transform->velocity;
+            transform->velocity.normalize();
+        }
+        std::cout << "[KeyboardControler.h]: vel: " << transform->velocity << std::endl;
     }
 };
