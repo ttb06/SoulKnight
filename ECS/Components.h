@@ -1,9 +1,11 @@
 #pragma once
 
 #include "ECS.h"
+#include "../Constant.h"
 #include "TransformComponent.h"
 #include "SpriteComponent.h"
 #include "DirectionComponent.h"
+#include "MouseController.h"
 #include "KeyboardController.h"
 #include "ColliderComponent.h"
 #include "TileComponent.h"
@@ -14,4 +16,3 @@
 #include "WeaponComponent.h"
 #include "WeaponSpriteComponent.h"
 #include "WeaponKeyboardController.h"
-#include "MouseController.h"

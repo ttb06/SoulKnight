@@ -3,12 +3,14 @@
 #include "Components.h"
 #include "../Vector2D.h"
 #include "../Constant.h"
-
+#include "../Game.h"
 class TransformComponent : public Component
 {
 public:
     Vector2D position;
     Vector2D velocity;
+
+    bool autoMove = false;
 
     int width = 16;
     int height = 16;
@@ -76,11 +78,51 @@ public:
         position.y = y;
     }
 
-    void moveTo (int tx, int ty)
+    void moveTo(int tx, int ty)
     {
-        velocity.x = tx - position.x;
-        velocity.y = ty - position.y;
-        velocity.normalize();
+        if (autoMove == true)
+        {
+            Vector2D destPos(tx, ty);
+            Vector2D distance;
+            distance.x = position.x - destPos.x;
+            distance.y = position.y - destPos.y;
+            if (distance.len() < speed)
+            {
+                position = destPos;
+                velocity.Zero();
+                autoMove = false;
+                std::cout << "[transform] moved" << std::endl;
+            }
+            else
+            {
+                velocity.x = (double)tx - position.x;
+                velocity.y = (double)ty - position.y;
+                velocity.normalize();
+            }
+        }
     }
 
+    void moveToGrid(int tx, int ty)
+    {
+        moveTo(tx* 16 *Game::total_scale, ty * 16 * Game::total_scale);
+    }
+    
+
+    //return position with the grid of map for bfs
+    int getPosGridX()
+    {
+        return (int)position.x/(16*Game::total_scale);
+    }
+    
+    int getPosGridY()
+    {
+        return (int)position.y/(16*Game::total_scale);
+    }
+
+    Vector2D getPosGrid()
+    {
+        int xPos = position.x;
+        int yPos = position.y;
+        return Vector2D(xPos / (16 * Game::total_scale), yPos /(16 * Game::total_scale)) ;
+    }
 };

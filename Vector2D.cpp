@@ -34,10 +34,9 @@ double Vector2D::getAngleDegrees()
 void Vector2D::normalize()
 {
     float oldX = x, oldY = y;
-    x /= len();
-    y /= len();
-    if (abs(x - oldX) + abs(y - oldY) < 0.00001)
-        x = oldX, y = oldY;
+    if (x == 0 && y == 0) return;
+    x /= sqrt(oldX * oldX + oldY * oldY);
+    y /= sqrt(oldX * oldX + oldY * oldY);
 }
 
 Vector2D &Vector2D::Add(const Vector2D &vec)

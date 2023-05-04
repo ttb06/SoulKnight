@@ -84,7 +84,6 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
     getline(mapFile, line);
 
     // load Collision map into Map and Game::collisionMap for path finding with bfs
-    int temp[sizeX * sizeY + 5];
     for (int y = 0; y < sizeY; y++)
     {
         getline(mapFile, line);

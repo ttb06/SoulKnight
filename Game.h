@@ -4,6 +4,7 @@
 #include <SDL_image.h>
 #include <iostream>
 #include <vector>
+#include "Constant.h"
 
 using std::vector;
 // class LTimer;
@@ -32,7 +33,10 @@ public:
     static SDL_Rect camera;
     static AssetManager *assets;
     static int total_scale;
+    
+    //bfs term
     static vector<vector<int>> neighbor;
+    static int visit[maxN][maxN];
     
     enum groupLabels : std::size_t
     {

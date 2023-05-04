@@ -53,7 +53,6 @@ public:
         wayToPlayer.x = player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x;
         wayToPlayer.y = player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y;
 
-
         if (wayToPlayer.len() > 12 * 16 * Game::total_scale)// len to detect player
         {
             entity->getComponent<TransformComponent>().velocity.Zero();
@@ -67,11 +66,11 @@ public:
             entity->getComponent<TransformComponent>().velocity.y = cosA;
         }
 
-        // if (entity->getComponent<TransformComponent>().velocity.len() != 0)
-        // {
-        //     entity->getComponent<SpriteComponent>().Play("Ru");
-        //     // sprite->Play("Idle");
-        // }
+        if (entity->getComponent<TransformComponent>().velocity.len() != 0)
+        {
+            // entity->getComponent<SpriteComponent>().Play("Run");
+            // sprite->Play("Idle");
+        }
         // else
         // {
         //     sprite->Play("Idle");

@@ -20,6 +20,7 @@ SDL_Event Game::event;
 int Game::total_scale = 3;
 int Game::level = 1;
 int Game::collisionMap[105][105];
+int Game::visit[maxN][maxN];
 
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
@@ -92,11 +93,12 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     map = new Map("terrain", Game::total_scale, 16);
 
     // esc implementation
-    map->LoadMap("assets/map_final.txt", 60, 60);
+    map->LoadMap("assets/map_final.txt", LV1_SIZE_X, LV1_SIZE_Y);
 
     player.addComponent<TransformComponent>(400, 400, 16, 28, Game::total_scale, 5);
     player.addComponent<DirectionComponent>();
     player.addComponent<SpriteComponent>("player", true, true);
+    player.addComponent<MouseController>();
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player", 0, 12, 16, true);
     player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), 2);
@@ -112,19 +114,19 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     label.addComponent<UILabel>(10, 10, "Init", "DungeonFont", white);
 
-    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 1), 200, 1, "projectile");
-    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 1, "projectile");
-    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 3), 200, 1, "projectile");
-    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 4), 200, 1, "projectile");
-    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 5), 200, 1, "projectile");
-    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
-    assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 1), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 3), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 4), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 5), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
 
     assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
     assets->CreateEnermy(Vector2D(2000, 2000), 1, 32, 36, "big_demon", 7, 1);
-    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
-    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
-    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
+    assets->CreateEnermy(Vector2D(500, 700), 1, 32, 36, "big_demon", 7, 1);
+    assets->CreateEnermy(Vector2D(500, 900), 1, 32, 36, "big_demon", 7, 1);
+    assets->CreateEnermy(Vector2D(500, 2100), 1, 32, 36, "big_demon", 7, 1);
 }
 
 void Game::handleEvents()
@@ -270,7 +272,6 @@ void Game::update()
 void Game::render()
 {
     SDL_RenderClear(renderer);
-    // player.getComponent<TransformComponent>().moveTo(700, 700);
     // render map (floor, things which are always behind player)
     for (auto &t : tiles)
     {

@@ -25,6 +25,14 @@ public:
         {
             switch (Game::event.key.keysym.sym)
             {
+            case SDLK_t:
+                entity->getComponent<TransformComponent>().autoMove = false;
+                break;
+            case SDLK_r:
+                entity->getComponent<TransformComponent>().autoMove = true;
+                entity->getComponent<MouseController>().go();
+                std::cout << "[keyboard]" << std::endl;
+                break;
             case SDLK_w:
             case SDLK_UP:
                 transform->velocity.y = -1;
@@ -94,14 +102,10 @@ public:
                 break;
             }
         }
+
         if (transform->velocity.x == 0 && transform->velocity.y == 0)
             sprite->Play("Idle");
-
-        else
-        {
-            Vector2D oldVel = transform->velocity;
-            transform->velocity.normalize();
-        }
-        std::cout << "[KeyboardControler.h]: vel: " << transform->velocity << std::endl;
+        transform->velocity.normalize();
+        // std::cout << "[KeyboardControler.h]: vel: " << transform->velocity << std::endl;
     }
 };
