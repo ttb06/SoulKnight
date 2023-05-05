@@ -84,5 +84,12 @@ public:
     void draw() override
     {
         TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);  
+        if (tag == "player")
+        {
+            SDL_Rect destt = collider;
+            destt.x -= Game::camera.x;
+            destt.y -= Game::camera.y;
+            TextureManager::Draw(tex, srcR, destt, SDL_FLIP_NONE);
+        }
     }
 };

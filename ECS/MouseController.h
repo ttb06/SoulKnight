@@ -32,6 +32,11 @@ public:
 
     bool bfs(int r, int c, int sx, int sy, int dx, int dy)
     {
+        if (dx == sx && dy == sy)
+        {
+            path.clear();
+            return true;
+        }
         int d[maxN][maxN];
         std::pair<int, int> par[maxN][maxN];
 
@@ -56,24 +61,15 @@ public:
             if (x == dx && y == dy)
             {
                 int tmpx = dx, tmpy = dy;
-                while (par[tmpx][tmpy].first != sx && par[tmpx][tmpy].second != sy)
+                while (par[tmpx][tmpy].first != sx || par[tmpx][tmpy].second != sy)
                 {
                     path.push_back(std::make_pair(tmpx, tmpy));
                     std::pair<int, int> tempPair = par[tmpx][tmpy];
                     tmpx = par[tmpx][tmpy].first;
                     tmpy = par[tmpx][tmpy].second;
                 }
-                
-                std::reverse(path.begin(),path.end());
+                path.push_back(std::make_pair(sx, sy));
 
-                // for (int j = 0;  j < LV1_SIZE_Y; j++)
-                // {
-                //     for (int i = 0; i < LV1_SIZE_X; i++)
-                //     {
-                //         std::cout << setw(10) << par[i][j].first << " " << par[i][j].second;
-                //     }
-                //     std::cout << std::endl;
-                // }
                 return true;
             }
 
@@ -122,12 +118,13 @@ public:
                 path.pop_back();
             }
         }
+        transform->autoMove = false;
     }
 
     void go()
     {
-        int sx = entity->getComponent<TransformComponent>().getPosGrid().x;
-        int sy = entity->getComponent<TransformComponent>().getPosGrid().y;
+        int sx = entity->getComponent<TransformComponent>().getPosGridX();
+        int sy = entity->getComponent<TransformComponent>().getPosGridY();
 
         // int sx = entity->getComponent<TransformComponent>().getPosX;
         // int sy = entity->getComponent<TransformComponent>().getPosY;
@@ -137,10 +134,13 @@ public:
 
         if (bfs(60, 60, sx, sy, dx, dy) && transform->autoMove)
         {
+            std::cout << "[mouse] Current pos: " << sx << " " << sy << std::endl;
+            std::cout << "[Mouse] path:  ";
             for (auto p : path)
             {
-                std::cout << p.first << " " << p.second << "       ";
+                std::cout << p.first << " " << p.second << "   ";
             }
+            std::cout << std::endl;
             movePath();
         }
         // std::cout << "[mouse] an rumming" << std::endl;
