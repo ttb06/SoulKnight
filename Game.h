@@ -33,15 +33,18 @@ public:
     static SDL_Rect camera;
     static AssetManager *assets;
     static int total_scale;
+
+    static vector<vector<int>> roomCoordinate;
+    static vector<int> roomEnermies; 
     
-    //bfs term
-    static vector<vector<int>> neighbor;
+    //bfs
     static int visit[maxN][maxN];
     
     enum groupLabels : std::size_t
     {
         groupMap,
         groupHigherMap,
+        groupAnimMap,
         groupPlayers,
         groupColliders,
         groupProjectiles,

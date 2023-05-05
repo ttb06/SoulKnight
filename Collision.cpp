@@ -19,3 +19,22 @@ bool Collision::isFront(const SDL_Rect &recA, const SDL_Rect &recB)
         return true;
     return false;
 }
+
+bool Collision::Circle(const int xPos, const int yPos, const Vector2D rPos, const SDL_Rect dest)
+{
+    int xDest = dest.x + dest.w / 2;
+    int yDest = dest.y + dest.h / 2;
+    double rDest = sqrt(dest.w * dest.w + dest.h * dest.h);
+    Vector2D distance(xDest - xPos, yDest - yPos);
+    if (distance.len() > rPos.len() + rDest)
+    {
+        return false;
+    }
+    double angle = acos((rPos.x * distance.x + rPos.y * distance.y) / (rPos.len() * distance.len()));
+    if (abs(angle) > M_PI_2)
+    {
+        return false;
+    }
+    std::cout << "[collision] trung cmnr" << std::endl;
+    return true;
+}

@@ -110,26 +110,36 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
         }
     }
 
-    // for (int y = 0; y < sizeY; y++)
-    // {
-    //     for (int x = 0; x < sizeX; x++)
-    //     {
-    //         if (y * sizeX + x - 1 >= 0 && temp[y * sizeX + x - 1] == 0)
-    //             Game::neighbor[y * sizeX + x].push_back(y * sizeX + x - 1);
-            
-    //         if ((y-1) * sizeX + x >= 0 && temp[(y-1) * sizeX + x] == 0)
-    //             Game::neighbor[y * sizeX + x].push_back((y-1) * sizeX + x);
-            
-    //         if ((y+1) * sizeX + x <= sizeX * sizeY - 1 && temp[(y+1) * sizeX + x] == 0)
-    //             Game::neighbor[y * sizeX + x].push_back((y+1) * sizeX + x);
+    getline(mapFile, line);
+    // load anim map
+    for (int y = 0; y < sizeY; y++)
+    {
+        getline(mapFile, line);
+        int cnt = 0;
+        for (int x = 0; x < sizeX; x++)
+        {
+            std::string index = "";
+            for (; cnt < line.size(); cnt++)
+            {
+                if (line[cnt] != ',')
+                    index.push_back(line[cnt]);
+                else
+                    break;
+            }
+            cnt++;
 
-    //         if (y * sizeX + x + 1 <= sizeX * sizeY - 1 && temp[y * sizeX + x + 1] == 0)
-    //             Game::neighbor[y * sizeX + x].push_back(y * sizeX + x + 1);
-            
-    //         // std::cout << temp[y * sizeX + x] << " ";
-    //     }
-    // }
-    // std::cout << Game::neighbor[351][1];
+            srcY = (atoi(index.c_str()) / 10) * tileSize;
+            srcX = (atoi(index.c_str()) % 10) * tileSize;
+
+            if (srcY == 0 && srcX == 0)
+                continue;
+            AddAnimTile(srcX, srcY, x * scaledSize, y * scaledSize);
+        }
+    }
+
+    //get Room coordinate
+
+    getline(mapFile, line);
 }
 
 void Map::AddTile(int srcX, int srcY, int xPos, int yPos)
@@ -145,4 +155,12 @@ void Map::AddHigherTile(int srcX, int srcY, int xPos, int yPos)
 
     tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, tileSize, mapScale, texID);
     tile.addGroup(Game::groupHigherMap);
+}
+
+void Map::AddAnimTile(int srcX, int srcY, int xPos, int yPos)
+{
+    auto &tile(manager.addEntity());
+
+    tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, tileSize, mapScale, texID, true);
+    tile.addGroup(Game::groupAnimMap);
 }

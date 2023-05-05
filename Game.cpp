@@ -27,7 +27,6 @@ SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 bool Game::isRunning = false;
 
 AssetManager *Game::assets = new AssetManager(&manager);
-vector<vector<int>> Game::neighbor;
 
 Entity &player(manager.addEntity());
 Entity &label(manager.addEntity());
@@ -45,6 +44,7 @@ std::vector<Entity *> &projectiles(manager.getGroup(Game::groupProjectiles));
 std::vector<Entity *> &enermies(manager.getGroup(Game::groupEnermies));
 std::vector<Entity *> &weapons(manager.getGroup(Game::groupWeapons));
 std::vector<Entity *> &highertiles(manager.getGroup(Game::groupHigherMap));
+std::vector<Entity *> &animtiles(manager.getGroup(Game::groupAnimMap));
 
 void Game::init(const char *title, int xPos, int yPos, int width, int height, bool fullScreen)
 {
@@ -156,24 +156,6 @@ void Game::handleEvents()
 SDL_Rect Cur;
 void Game::update()
 {
-    SDL_Rect weaponCollider;
-    weaponCollider.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 + Game::camera.x;
-    weaponCollider.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2+ Game::camera.y;
-
-    weaponCollider.w = (int)abs(weapon.getComponent<DirectionComponent>().vec.x);
-    weaponCollider.h = (int)abs(weapon.getComponent<DirectionComponent>().vec.y);
-
-    Cur = weaponCollider;
-    if (weapon.getComponent<DirectionComponent>().vec.x < 0)
-    {
-        weaponCollider.x -= weaponCollider.w;
-    }
-
-    if (weapon.getComponent<DirectionComponent>().vec.y < 0)
-    {
-        weaponCollider.y -= weaponCollider.h;
-    }
-
     // store old information
     if (player.getComponent<HUDComponent>().curHealth <= 0)
     {
@@ -200,6 +182,7 @@ void Game::update()
         if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
         {
             std::cout << "[Game.cpp]: Player hit collider" << std::endl;
+
             player.getComponent<TransformComponent>().position.x -= playerVel.x * playerSpeed;
             player.getComponent<ColliderComponent>().update();
             if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
@@ -213,14 +196,7 @@ void Game::update()
             {
                 player.getComponent<TransformComponent>().position.y += playerVel.y * playerSpeed;
             }
-
             player.getComponent<ColliderComponent>().update();
-
-            // if (player.getComponent<TransformComponent>().position.x == playerPos.x &&
-            //     player.getComponent<TransformComponent>().position.y == playerPos.y)
-            // {
-            //     std::cout << "[Game.cpp]: Player returned to the old position" << std::endl;
-            // }
             break;
         }
     }
@@ -243,23 +219,33 @@ void Game::update()
         }
     }
 
+    Vector2D radiusWeapon = player.getComponent<DirectionComponent>().vec;
+    radiusWeapon.normalize();
+    radiusWeapon.x *= RANGE_MELE_WEAPON;
+    radiusWeapon.y *= RANGE_MELE_WEAPON;
+    // cout << "[Game] radius: " << radiusWeapon.len() << endl;
+
+    SDL_Rect testRect = {5,5, 5, 5};
+    int xTest = 0, yTest = 0;
+    Vector2D Radius(1, 1);
+    cout << Collision::Circle(xTest, yTest, Radius, testRect) << endl;
+
     for (auto &e : enermies)
     {
-
         if (weapon.getComponent<WeaponComponent>().isAtacking &&
             weapon.getComponent<WeaponComponent>().attackCounter != e->getComponent<EnermyComponent>().lastTakenDamage &&
-            (Collision::AABB(e->getComponent<ColliderComponent>().collider, weaponCollider)))
+            (Collision::Circle((int)player.getComponent<TransformComponent>().position.x, (int)player.getComponent<TransformComponent>().position.y, radiusWeapon, e->getComponent<ColliderComponent>().collider)))
         {
-            std::cout << e->getComponent<EnermyComponent>().curHealth;
+            std::cout << "[Game]: Current health: " << e->getComponent<EnermyComponent>().curHealth << endl;
             e->getComponent<EnermyComponent>().lastTakenDamage = weapon.getComponent<WeaponComponent>().attackCounter;
             e->getComponent<EnermyComponent>().takeDamage(player.getComponent<HUDComponent>().attackDamage);
         }
-    }
+    } 
 
     for (auto &p : projectiles)
     {
-        if (weapon.getComponent<WeaponComponent>().isAtacking &&
-            (Collision::AABB(p->getComponent<ColliderComponent>().collider, weaponCollider)))
+        // if (weapon.getComponent<WeaponComponent>().isAtacking &&
+        //     (Collision::AABB(p->getComponent<ColliderComponent>().collider, weaponCollider)))
         {
             p->destroy();
         }
@@ -295,6 +281,10 @@ void Game::render()
         t->draw();
     }
 
+    for (auto &t: animtiles)
+    {
+        t->draw();
+    }
     // render enermies which are behind player
     for (auto &e : enermies)
     {

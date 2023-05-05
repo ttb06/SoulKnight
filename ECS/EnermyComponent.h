@@ -15,6 +15,7 @@ public:
     Vector2D wayToPlayer;
     int lastTakenDamage = -1;
     SpriteComponent *sprite;
+    int room = -1;
 
     EnermyComponent(int mH, int cD = 0)
     {
@@ -22,6 +23,14 @@ public:
         curHealth = mH;
         collisionDamage = cD;
     }
+    
+    // EnermyComponent(int mH, int cD = 0, int r)
+    // {
+    //     maxHealth = mH;
+    //     curHealth = mH;
+    //     collisionDamage = cD;
+    //     room = r;
+    // }
 
     ~EnermyComponent(){};
 

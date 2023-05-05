@@ -9,7 +9,9 @@ class TileComponent : public Component
 public:
     SDL_Texture *texture;
     SDL_Rect srcRect, destRect;
+    SDL_Rect firstRect;
     Vector2D position;
+    bool isAnim = false;
 
     TileComponent() = default;
 
@@ -18,10 +20,10 @@ public:
         SDL_DestroyTexture(texture);
     }
 
-    TileComponent(int srcX, int srcY, int xPos, int yPos, int tsize, int tscale, std::string id)
+    TileComponent(int srcX, int srcY, int xPos, int yPos, int tsize, int tscale, std::string id, bool anim = false)
     {
         texture = Game::assets->GetTexture(id);
-        
+
         position.x = xPos;
         position.y = yPos;
 
@@ -32,12 +34,22 @@ public:
         destRect.x = xPos;
         destRect.y = yPos;
         destRect.w = destRect.h = tsize * tscale;
+
+        isAnim = anim;
+        if (isAnim)
+        {
+            firstRect = srcRect;
+        }
     }
 
     void update() override
     {
         destRect.x = position.x - Game::camera.x;
         destRect.y = position.y - Game::camera.y;
+        if (isAnim)
+        {
+            srcRect.x = firstRect.x + 16 * (int)(SDL_GetTicks() / TILE_ANIM_SPEED % (TILE_ANIM_FRAMES));
+        }
     }
 
     void draw() override

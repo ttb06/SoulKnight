@@ -30,7 +30,6 @@ public:
         {
             if (entity->getComponent<HUDComponent>().isImmortal == true)
             {
-                std::cout << "hallaaaaaaaaaaa" << std::endl;
                 sprite->Play("Hit");
             }
             else if (transform->velocity.len() > 0)
@@ -39,6 +38,7 @@ public:
             }
             else
             {
+                if (entity->getComponent<MouseController>().path.empty())
                 sprite->Play("Idle");
             }
         }

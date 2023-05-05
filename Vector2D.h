@@ -12,7 +12,7 @@ public:
     Vector2D(float x, float y);
     ~Vector2D();
 
-    double len();
+    double len() const;
     double getAngleRadians();
     double getAngleDegrees();
 

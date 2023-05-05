@@ -15,6 +15,7 @@ public:
     int width = 16;
     int height = 16;
     int scale = 2;
+    int room = -1;
 
     int speed = 5;
 
@@ -60,6 +61,16 @@ public:
         width = w;
         scale = scl;
         speed = spd;
+    }
+
+    TransformComponent(int x, int y, int w, int h, int scl, int spd, int r)
+    {
+        setPosition(x, y);
+        height = h;
+        width = w;
+        scale = scl;
+        speed = spd;
+        room = r;
     }
 
     void init() override
