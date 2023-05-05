@@ -16,3 +16,4 @@
 #include "WeaponComponent.h"
 #include "WeaponSpriteComponent.h"
 #include "WeaponKeyboardController.h"
+#include "UpdateSpriteComponent.h"

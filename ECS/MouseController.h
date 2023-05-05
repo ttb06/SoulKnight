@@ -6,16 +6,8 @@
 #include <math.h>
 #include <queue>
 #include "../Constant.h"
-#include <iomanip>
-
-using std::setw;
 
 extern Entity &player;
-
-// int r, c;
-// char a[maxN][maxN];
-// int d[maxN][maxN];
-// bool Game::visit[maxN][maxN];
 
 class MouseController : public Component
 {
@@ -23,6 +15,7 @@ public:
     TransformComponent *transform;
     SpriteComponent *sprite;
     std::vector<std::pair<int, int>> path;
+    bool isUsing = true;
 
     void init() override
     {
@@ -41,7 +34,7 @@ public:
         std::pair<int, int> par[maxN][maxN];
 
         path.clear();
-        for (int i = 0; i < r; ++i)
+        for (int i = 0; i <= r; i++)
         {
             std::fill_n(d[i], c + 1, 0);
             std::fill_n(Game::visit[i], c + 1, false);
@@ -65,9 +58,10 @@ public:
                 {
                     path.push_back(std::make_pair(tmpx, tmpy));
                     std::pair<int, int> tempPair = par[tmpx][tmpy];
-                    tmpx = par[tmpx][tmpy].first;
-                    tmpy = par[tmpx][tmpy].second;
+                    tmpx = tempPair.first;
+                    tmpy = tempPair.second;
                 }
+                path.push_back(std::make_pair(tmpx, tmpy));
                 path.push_back(std::make_pair(sx, sy));
 
                 return true;
@@ -100,9 +94,28 @@ public:
 
     void update() override
     {
+        if (!isUsing) return;
+        if (Game::event.type == SDL_MOUSEBUTTONDOWN)
+        {
+            if (Game::event.button.button == SDL_BUTTON_RIGHT)
+            {
+                transform->autoMove = true;
+                int dx, dy;
+                SDL_GetMouseState(&dx, &dy);
+                dx += Game::camera.x;
+                dy += Game::camera.y;
+                dx /= (16 * Game::total_scale);
+                dy /= (16 * Game::total_scale);
+                go(dx, dy);
+            }
+        }
         if (transform->autoMove)
         {
             movePath();
+        }
+        if (path.empty())
+        {
+            transform->autoMove = false;
         }
     }
 
@@ -116,23 +129,17 @@ public:
             {
                 transform->autoMove = true;
                 path.pop_back();
+                std::cout << "Current move: " << path[path.size() - 1].first << " " << path[path.size() - 1].second << std::endl;
             }
         }
-        transform->autoMove = false;
     }
 
-    void go()
+    void go(int dx, int dy)
     {
         int sx = entity->getComponent<TransformComponent>().getPosGridX();
         int sy = entity->getComponent<TransformComponent>().getPosGridY();
 
-        // int sx = entity->getComponent<TransformComponent>().getPosX;
-        // int sy = entity->getComponent<TransformComponent>().getPosY;
-
-        int dx = 10;
-        int dy = 10;
-
-        if (bfs(60, 60, sx, sy, dx, dy) && transform->autoMove)
+        if (bfs(LV1_SIZE_X, LV1_SIZE_Y, sx, sy, dx, dy) && transform->autoMove)
         {
             std::cout << "[mouse] Current pos: " << sx << " " << sy << std::endl;
             std::cout << "[Mouse] path:  ";
@@ -143,6 +150,5 @@ public:
             std::cout << std::endl;
             movePath();
         }
-        // std::cout << "[mouse] an rumming" << std::endl;
     }
 };

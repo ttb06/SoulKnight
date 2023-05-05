@@ -18,6 +18,10 @@ const int moveY[] = {1, -1, 0, 0};
 
 const int maxN = 105;
 
+const int IMMORTAL_TIME = 500; 
+//max distance to recognize enermies cal by tile set (*16*scale)
+const int MAX_DISTANCE_FROM_ENERMY_TILE = 60;
+
 enum bfs
 {
     dest = -2,

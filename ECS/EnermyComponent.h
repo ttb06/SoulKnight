@@ -53,7 +53,7 @@ public:
         wayToPlayer.x = player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x;
         wayToPlayer.y = player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y;
 
-        if (wayToPlayer.len() > 12 * 16 * Game::total_scale)// len to detect player
+        if (wayToPlayer.len() > MAX_DISTANCE_FROM_ENERMY_TILE * 16 * Game::total_scale)// distance to detect player
         {
             entity->getComponent<TransformComponent>().velocity.Zero();
         }
@@ -61,19 +61,9 @@ public:
         {
             double sinA = wayToPlayer.x / wayToPlayer.len();
             double cosA = wayToPlayer.y / wayToPlayer.len();
-
+            // entity->getComponent<TransformComponent>().velocity = wayToPlayer.normalize();
             entity->getComponent<TransformComponent>().velocity.x = sinA;
             entity->getComponent<TransformComponent>().velocity.y = cosA;
         }
-
-        if (entity->getComponent<TransformComponent>().velocity.len() != 0)
-        {
-            // entity->getComponent<SpriteComponent>().Play("Run");
-            // sprite->Play("Idle");
-        }
-        // else
-        // {
-        //     sprite->Play("Idle");
-        // }
     }
 };

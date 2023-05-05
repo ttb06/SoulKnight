@@ -77,7 +77,7 @@ public:
         position.x = x;
         position.y = y;
     }
-
+    //move collider
     void moveTo(int tx, int ty)
     {
         if (autoMove == true)
@@ -86,7 +86,7 @@ public:
             Vector2D distance;
             distance.x = position.x - destPos.x;
             distance.y = position.y + 12 * Game::total_scale - destPos.y;
-
+            std::cout << "[transform] current distance: " << distance.len() << "  " << distance.x << " " << distance.y << std::endl;
             if (distance.len() < speed)
             {
                 position.x = destPos.x;
@@ -104,6 +104,7 @@ public:
         }
     }
 
+    //move collider
     void moveToGrid(int tx, int ty)
     {
         moveTo(tx * 16 * Game::total_scale, ty * 16 * Game::total_scale);

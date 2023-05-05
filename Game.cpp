@@ -102,6 +102,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player", 0, 12, 16, true);
     player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), 2);
+    player.addComponent<UpdateSpriteComponent>();
     player.addGroup(groupPlayers);
 
     weapon.addComponent<DirectionComponent>();
@@ -121,6 +122,13 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 5), 200, 1, "projectile");
     // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
     // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
+    // for (int i = 10; i <= 100; i += 10)
+    // {
+    //     for (int j = 10; j <= 100; j += 10)
+    //     {
+    //         assets->CreatProjectile(Vector2D(i, j), Vector2D(1, 1), 200, 0, "projectile");
+    //     }
+    // }
 
     assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
     assets->CreateEnermy(Vector2D(2000, 2000), 1, 32, 36, "big_demon", 7, 1);
@@ -145,9 +153,27 @@ void Game::handleEvents()
         break;
     }
 }
-
+SDL_Rect Cur;
 void Game::update()
 {
+    SDL_Rect weaponCollider;
+    weaponCollider.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 + Game::camera.x;
+    weaponCollider.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2+ Game::camera.y;
+
+    weaponCollider.w = (int)abs(weapon.getComponent<DirectionComponent>().vec.x);
+    weaponCollider.h = (int)abs(weapon.getComponent<DirectionComponent>().vec.y);
+
+    Cur = weaponCollider;
+    if (weapon.getComponent<DirectionComponent>().vec.x < 0)
+    {
+        weaponCollider.x -= weaponCollider.w;
+    }
+
+    if (weapon.getComponent<DirectionComponent>().vec.y < 0)
+    {
+        weaponCollider.y -= weaponCollider.h;
+    }
+
     // store old information
     if (player.getComponent<HUDComponent>().curHealth <= 0)
     {
@@ -220,24 +246,6 @@ void Game::update()
     for (auto &e : enermies)
     {
 
-        SDL_Rect weaponCollider;
-        weaponCollider.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2;
-        weaponCollider.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2;
-        double scl = 0;
-
-        weaponCollider.w = (int)abs(weapon.getComponent<DirectionComponent>().vec.x);
-        weaponCollider.h = (int)abs(weapon.getComponent<DirectionComponent>().vec.y);
-
-        if (weapon.getComponent<DirectionComponent>().vec.x < 0)
-        {
-            weaponCollider.x -= weaponCollider.w;
-        }
-
-        if (weapon.getComponent<DirectionComponent>().vec.y < 0)
-        {
-            weaponCollider.y -= weaponCollider.h;
-        }
-
         if (weapon.getComponent<WeaponComponent>().isAtacking &&
             weapon.getComponent<WeaponComponent>().attackCounter != e->getComponent<EnermyComponent>().lastTakenDamage &&
             (Collision::AABB(e->getComponent<ColliderComponent>().collider, weaponCollider)))
@@ -245,6 +253,15 @@ void Game::update()
             std::cout << e->getComponent<EnermyComponent>().curHealth;
             e->getComponent<EnermyComponent>().lastTakenDamage = weapon.getComponent<WeaponComponent>().attackCounter;
             e->getComponent<EnermyComponent>().takeDamage(player.getComponent<HUDComponent>().attackDamage);
+        }
+    }
+
+    for (auto &p : projectiles)
+    {
+        if (weapon.getComponent<WeaponComponent>().isAtacking &&
+            (Collision::AABB(p->getComponent<ColliderComponent>().collider, weaponCollider)))
+        {
+            p->destroy();
         }
     }
 
@@ -325,7 +342,9 @@ void Game::render()
     }
 
     label.draw();
-
+    SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
+    SDL_RenderFillRect(Game::renderer, &Cur);
+    SDL_SetRenderDrawColor(Game::renderer, 0, 0, 0, 255);
     SDL_RenderPresent(renderer);
 }
 

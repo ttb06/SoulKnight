@@ -91,10 +91,13 @@ public:
 
             destRect = weapon.dest;
 
-            if (weapon.dir.flip == SDL_FLIP_NONE)
-                weapon.angle -= 30;
-            else
-                weapon.angle += 30;
+            // if (player.getComponent<DirectionComponent>().isEnermyAhead == true)
+            {
+                if (weapon.dir.flip == SDL_FLIP_NONE)
+                    weapon.angle -= 30;
+                else
+                    weapon.angle += 30;
+            }
         }
 
         if (animIndex == 1)
@@ -117,7 +120,6 @@ public:
             if (weapon.dir.flip == SDL_FLIP_HORIZONTAL)
             {
                 weapon.dir.flip = (SDL_RendererFlip)(SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL);
-                
             }
             else
                 weapon.dir.flip = SDL_FLIP_VERTICAL;

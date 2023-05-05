@@ -27,6 +27,7 @@ void AssetManager::CreateEnermy(Vector2D pos, int spd, int width, int height, st
     enermy.addComponent<SpriteComponent>(idSprite, true, false);
     enermy.addComponent<ColliderComponent>(idSprite);
     enermy.addComponent<EnermyComponent>(mH, cD);
+    enermy.addComponent<UpdateSpriteComponent>();
     enermy.addGroup(Game::groupEnermies);
 }
 

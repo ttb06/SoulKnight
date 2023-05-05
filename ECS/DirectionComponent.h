@@ -17,6 +17,7 @@ class DirectionComponent : public Component
 {
 private:
 public:
+    bool isEnermyAhead = true;
     double angle;
     Vector2D vec;
     SDL_RendererFlip flip;
@@ -56,9 +57,10 @@ public:
             }
         }
 
-        if (vec.len() > 16 * Game::total_scale * 5)
+        if (vec.len() > MAX_DISTANCE_FROM_ENERMY_TILE * Game::total_scale * 5)
         {
             vec = player.getComponent<TransformComponent>().velocity;
+            isEnermyAhead = false;
             if (vec.len() > 0)
             {
                 angle = vec.getAngleDegrees();
@@ -73,7 +75,6 @@ public:
                 }
             }
         }
-        // std::cout << "[DirectionComponent.h]: vec: " << vec << ", angle: " << angle << std::endl;
     }
 
     void draw() override
