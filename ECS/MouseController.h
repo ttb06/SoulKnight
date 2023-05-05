@@ -62,7 +62,6 @@ public:
                     tmpy = tempPair.second;
                 }
                 path.push_back(std::make_pair(tmpx, tmpy));
-                path.push_back(std::make_pair(sx, sy));
 
                 return true;
             }

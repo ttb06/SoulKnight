@@ -38,7 +38,7 @@ public:
             }
             else
             {
-                if (entity->getComponent<MouseController>().path.empty())
+                if (entity->getComponent<MouseController>().path.empty() || !entity->getComponent<TransformComponent>().autoMove)
                 sprite->Play("Idle");
             }
         }
