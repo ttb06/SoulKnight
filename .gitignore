@@ -2,3 +2,4 @@ main.exe
 *.dll
 .vscode
 Makefile
+src/
