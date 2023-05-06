@@ -70,8 +70,8 @@ public:
             }
             else
             {
-                collider.x = (int)transform->position.x + initCollider.x*transform->scale;
-                collider.y = (int)transform->position.y + initCollider.y*transform->scale;
+                collider.x = (int)transform->position.x + initCollider.x * transform->scale;
+                collider.y = (int)transform->position.y + initCollider.y * transform->scale;
                 collider.w = size * transform->scale;
                 collider.h = size * transform->scale;
             }
@@ -83,13 +83,14 @@ public:
 
     void draw() override
     {
-        TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);  
+        if (tag == "terrain")
+            TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
         if (tag == "player")
         {
             SDL_Rect destt = collider;
             destt.x -= Game::camera.x;
             destt.y -= Game::camera.y;
-            TextureManager::Draw(tex, srcR, destt, SDL_FLIP_NONE);
+            // TextureManager::Draw(tex, srcR, destt, SDL_FLIP_NONE);
         }
     }
 };

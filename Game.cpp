@@ -93,6 +93,8 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("skull", "assets/skull.png");
     assets->AddTexture("ui_heart", "assets/ui_heart.png");
     assets->AddTexture("ui_armor", "assets/ui_armor.png");
+    assets->AddTexture("fire_projectile", "assets/projectile_fire_ball.png");
+    assets->AddTexture("ice_projectile", "assets/projectile_ice_ball.png");
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
 
@@ -123,8 +125,8 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     label.addComponent<UILabel>(10, 10, "Init", "DungeonFont", white);
 
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 1), 200, 1, "projectile");
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 1, "projectile");
+    // assets->CreatProjectile(Vector2D(100, 100), Vector2D(0, 0), 500, 0, "ice_projectile");
+    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 0, "projectile");
     // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 3), 200, 1, "projectile");
     // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 4), 200, 1, "projectile");
     // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 5), 200, 1, "projectile");
@@ -137,12 +139,12 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     //         assets->CreatProjectile(Vector2D(i, j), Vector2D(1, 1), 200, 0, "projectile");
     //     }
     // }
-
+    // assets->CreatProjectile(Vector2D(0, 0), Vector2D(1, 1), 200, 1, "ice_projectile");
     assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
-    assets->CreateEnermy(Vector2D(2000, 2000), 1, 32, 36, "big_demon", 7, 1);
-    assets->CreateEnermy(Vector2D(500, 700), 1, 32, 36, "big_demon", 7, 1);
-    assets->CreateEnermy(Vector2D(500, 900), 1, 32, 36, "big_demon", 7, 1);
-    assets->CreateEnermy(Vector2D(500, 2100), 1, 32, 36, "big_demon", 7, 1);
+    // assets->CreateEnermy(Vector2D(2000, 2000), 1, 32, 36, "big_demon", 7, 1);
+    // assets->CreateEnermy(Vector2D(500, 700), 1, 32, 36, "big_demon", 7, 1);
+    // assets->CreateEnermy(Vector2D(500, 900), 1, 32, 36, "big_demon", 7, 1);
+    // assets->CreateEnermy(Vector2D(500, 2100), 1, 32, 36, "big_demon", 7, 1);
 }
 
 void Game::handleEvents()
@@ -222,7 +224,9 @@ void Game::update()
     {
         if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
         {
-            p->destroy();
+            // p->destroy();
+            p->getComponent<ProjectileSpriteComponent>().destroy();
+            player.getComponent<HUDComponent>().getDamage(p->getComponent<ProjectileComponent>().dame()); 
             std::cout << "[Game.cpp]: Hit player" << std::endl;
         }
     }
@@ -231,12 +235,6 @@ void Game::update()
     radiusWeapon.normalize();
     radiusWeapon.x *= RANGE_MELE_WEAPON;
     radiusWeapon.y *= RANGE_MELE_WEAPON;
-    // cout << "[Game] radius: " << radiusWeapon.len() << endl;
-
-    SDL_Rect testRect = {5, 5, 5, 5};
-    int xTest = 0, yTest = 0;
-    Vector2D Radius(1, 1);
-    cout << Collision::Circle(xTest, yTest, Radius, testRect) << endl;
 
     for (auto &e : enermies)
     {
@@ -254,9 +252,9 @@ void Game::update()
     {
         // if (weapon.getComponent<WeaponComponent>().isAtacking &&
         //     (Collision::AABB(p->getComponent<ColliderComponent>().collider, weaponCollider)))
-        {
-            p->destroy();
-        }
+        // {
+        //     p->destroy();
+        // }
     }
 
     float newXposCam;
@@ -322,7 +320,7 @@ void Game::render()
     // render projectiles
     for (auto &p : projectiles)
     {
-        if (Collision::AABB(camera, p->getComponent<ColliderComponent>().collider))
+        // if (Collision::AABB(camera, p->getComponent<ColliderComponent>().collider))
             p->draw();
     }
 

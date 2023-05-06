@@ -22,8 +22,18 @@ double Vector2D::len() const
 
 double Vector2D::getAngleRadians()
 {
+    if (len() == 0) return 1;
     double sin = y / len();
     return asin(sin);
+}
+
+double Vector2D::getAngleDegrees360()
+{
+    if (len() == 0) return 1;
+    double tempy = -y;
+    if (x*y < 0) tempy = -y;
+    double sin = tempy / len();
+    return asin(sin) * 180 / M_PI;
 }
 
 double Vector2D::getAngleDegrees()
