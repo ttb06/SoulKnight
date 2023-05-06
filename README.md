@@ -12,26 +12,26 @@ My Advanced Programming project - Soul Knight clone (Spirit == Soul, Warrior == 
 ### About Game
 This Game is built with ECS system which I learned from [`here`](https://www.youtube.com/@CarlBirch). We can add Component to Entity (each Entity is a vector of Component), and use a Manager to manage all Entities. Here are some type of Entity:
 
--Player:
---Can move by click right mouse (using BFS) or by WASD or arrow
---Has armor and health, armor can restore after a short time
+- Player:
+* Can move by click right mouse (using BFS) or by WASD or arrow
+* Has armor and health, armor can restore after a short time
 
 -Weapon:
---Make Damage to Enermies
+* Make Damage to Enermies
 
 -Enermy:
---Can shoot projectiles
+* Can shoot projectiles
 
 -Projectiles
---Make Damage to which it hit
+* Make Damage to which it hit
 
 -Tile
---Of map, which can be animated ( so nice :> )
+* Of map, which can be animated ( so nice :> )
 
 #### Knowledge used
--OOP (for Component)
--BFS (to move by right-click mouse)
--Using .h and .cpp logically
+- OOP (for Component)
+- BFS (to move by right-click mouse)
+- Using .h and .cpp logically
 
 ##### Self-Assessment
 9 - 9.5
