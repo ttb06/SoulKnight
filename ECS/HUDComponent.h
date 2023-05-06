@@ -10,7 +10,8 @@
 class HUDComponent : public Component
 {
 private:
-    SDL_Texture *hpTex;
+    SDL_Texture *hpTex, *armorTex;
+
     std::string hpPath;
     SpriteComponent *sprite;
     Vector2D pos;
@@ -48,7 +49,7 @@ public:
         sprite = &entity->getComponent<SpriteComponent>();
     };
 
-    HUDComponent(int mh, int a, Vector2D _pos, int dam)
+    HUDComponent(int mh, int a, Vector2D _pos, int dam, std::string hp, std::string ar)
     {
         attackDamage = dam;
         pos = _pos;
@@ -57,12 +58,11 @@ public:
         maxArmor = a;
         curArmor = a;
         sprite = &entity->getComponent<SpriteComponent>();
+        hpTex = Game::assets->GetTexture(hp);
+        armorTex = Game::assets->GetTexture(ar);
     };
 
-    ~HUDComponent()
-    {
-        SDL_DestroyTexture(hpTex);
-    };
+    ~HUDComponent(){};
 
     void init() override
     {
@@ -91,19 +91,58 @@ public:
 
     void draw() override
     {
-        SDL_Color curHealthColor = {222, 58, 57, 255}, maxHealthColor = {106, 80, 55, 255};
-        SDL_Color curArmorColor = {141, 141, 141, 255}, maxArmorColor = {106, 80, 55, 255};
-        SDL_Color HUDBar = {107, 79, 56, 255};
+        int maxHeartHp = (maxHealth + 1) / 2;
+        double curHeartHp = 1.0 * (curHealth) / 2;
+        int curX = pos.x, curY = pos.y;
+        for (int i = 0; i < maxHeartHp; i++)
+        {
+            curX = i * 20 * Game::total_scale + pos.x;
+            SDL_Rect src = {0, 0, 16, 16};
+            SDL_Rect dest = {curX, curY, 16 * Game::total_scale, 16 * Game::total_scale};
+            TextureManager::Draw(hpTex, src, dest, SDL_FLIP_NONE);
+        }
+        curX = pos.x - 20 * Game::total_scale;
+        for (int i = 0; i < (int)curHeartHp; i++)
+        {
+            curX = i * 20 * Game::total_scale + pos.x;
+            SDL_Rect src = {32, 0, 16, 16};
+            SDL_Rect dest = {curX, curY, 16 * Game::total_scale, 16 * Game::total_scale};
+            TextureManager::Draw(hpTex, src, dest, SDL_FLIP_NONE);
+        }
+        if (curHeartHp - (int)curHeartHp == 0.5)
+        {
+            curX += 20 * Game::total_scale;
+            SDL_Rect src = {16, 0, 16, 16};
+            SDL_Rect dest = {curX, curY, 16 * Game::total_scale, 16 * Game::total_scale};
+            TextureManager::Draw(hpTex, src, dest, SDL_FLIP_NONE);
+        }
 
-        // draw
-        int sizeBar = 7;
-        SDL_Color white = {255, 255, 255, 255};
-        int xPos = pos.x, yPos = pos.y;
-        // TextureManager::drawRect(5, 5, std::max(maxHealth, maxArmor) * 32 + 5, 70, HUDBar);
-        TextureManager::drawRect(xPos + 10, yPos + 10, 32 * sizeBar, 32, maxHealthColor);
-        TextureManager::drawRect(xPos + 10, yPos + 10, 32 * sizeBar * curHealth / maxHealth, 32, curHealthColor);
-        TextureManager::drawRect(xPos + 10, yPos + 100, 32 * sizeBar, 32, maxArmorColor);
-        TextureManager::drawRect(xPos + 10, yPos + 100, 32 * sizeBar * curArmor / maxArmor, 32, curArmorColor);
+        int maxHeartArmor = (maxArmor + 1) / 2;
+        double curHeartArmor = 1.0 * (curArmor) / 2;
+        curX = pos.x, curY = pos.y + 20 * Game::total_scale;
+        for (int i = 0; i < maxHeartArmor; i++)
+        {
+            curX = i * 20 * Game::total_scale + pos.x;
+            SDL_Rect src = {0, 0, 16, 16};
+            SDL_Rect dest = {curX, curY, 16 * Game::total_scale, 16 * Game::total_scale};
+            TextureManager::Draw(armorTex, src, dest, SDL_FLIP_NONE);
+        }
+        curX = pos.x - 20 * Game::total_scale;
+        for (int i = 0; i < (int)curHeartArmor; i++)
+        {
+            curX = i * 20 * Game::total_scale + pos.x;
+            SDL_Rect src = {32, 0, 16, 16};
+            SDL_Rect dest = {curX, curY, 16 * Game::total_scale, 16 * Game::total_scale};
+            TextureManager::Draw(armorTex, src, dest, SDL_FLIP_NONE);
+        }
+        if (curHeartArmor - (int)curHeartArmor == 0.5 && curArmor >= 0)
+        {
+            curX += 20 * Game::total_scale;
+            SDL_Rect src = {16, 0, 16, 16};
+            SDL_Rect dest = {curX, curY, 16 * Game::total_scale, 16 * Game::total_scale};
+            TextureManager::Draw(armorTex, src, dest, SDL_FLIP_NONE);
+        }
+
     }
 
     void getDamage(int dam)
@@ -123,7 +162,7 @@ public:
 
             if (sprite->hasHitAnim)
                 sprite->Play("Hit");
-                
+
             Uint32 time = SDL_GetTicks();
             lastDameTakenTime = time;
         }

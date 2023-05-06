@@ -94,9 +94,9 @@ public:
             // if (player.getComponent<DirectionComponent>().isEnermyAhead == true)
             {
                 if (weapon.dir.flip == SDL_FLIP_NONE)
-                    weapon.angle -= 30;
+                    weapon.angle -= 15;
                 else
-                    weapon.angle += 30;
+                    weapon.angle += 15;
             }
         }
 
