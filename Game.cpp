@@ -78,8 +78,12 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
         std::cout << "Error: SDL_TTF" << std::endl;
     }
 
-    // assets implenemtation
-    // add Texture
+    // set icon
+    SDL_Surface* icon = SDL_LoadBMP("assets/skull.png");
+    SDL_SetWindowIcon(window, icon);
+    SDL_FreeSurface (icon);
+    //  assets implenemtation
+    //  add Texture
     assets->AddTexture("terrain", "assets/tiles_assets_final.png");
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
@@ -87,24 +91,28 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
     assets->AddTexture("katana", "assets/test.png");
     assets->AddTexture("skull", "assets/skull.png");
+    assets->AddTexture("ui_heart", "assets/ui_heart.png");
+    assets->AddTexture("ui_armor", "assets/ui_armor.png");
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
 
     map = new Map("terrain", Game::total_scale, 16);
 
     // esc implementation
-    map->LoadMap("assets/map_final.txt", LV1_SIZE_X, LV1_SIZE_Y);
+    map->LoadMap("assets/map_lv1.txt", LV1_SIZE_X, LV1_SIZE_Y);
 
+    //create player
     player.addComponent<TransformComponent>(400, 400, 16, 28, Game::total_scale, 5);
     player.addComponent<DirectionComponent>();
     player.addComponent<SpriteComponent>("player", true, true);
     player.addComponent<MouseController>();
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player", 0, 12, 16, true);
-    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), 2);
+    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), 2, "ui_heart", "ui_armor");
     player.addComponent<UpdateSpriteComponent>();
     player.addGroup(groupPlayers);
 
+    //create weapon
     weapon.addComponent<DirectionComponent>();
     weapon.addComponent<WeaponComponent>("katana", 29, 6, Game::total_scale);
     weapon.addComponent<WeaponSpriteComponent>("katana", 29, 6, Game::total_scale);
@@ -225,7 +233,7 @@ void Game::update()
     radiusWeapon.y *= RANGE_MELE_WEAPON;
     // cout << "[Game] radius: " << radiusWeapon.len() << endl;
 
-    SDL_Rect testRect = {5,5, 5, 5};
+    SDL_Rect testRect = {5, 5, 5, 5};
     int xTest = 0, yTest = 0;
     Vector2D Radius(1, 1);
     cout << Collision::Circle(xTest, yTest, Radius, testRect) << endl;
@@ -240,7 +248,7 @@ void Game::update()
             e->getComponent<EnermyComponent>().lastTakenDamage = weapon.getComponent<WeaponComponent>().attackCounter;
             e->getComponent<EnermyComponent>().takeDamage(player.getComponent<HUDComponent>().attackDamage);
         }
-    } 
+    }
 
     for (auto &p : projectiles)
     {
@@ -281,7 +289,7 @@ void Game::render()
         t->draw();
     }
 
-    for (auto &t: animtiles)
+    for (auto &t : animtiles)
     {
         t->draw();
     }
