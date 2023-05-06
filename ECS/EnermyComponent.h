@@ -6,30 +6,36 @@
 #include "math.h"
 
 extern Entity &player;
-
+// extern AssetManager *Game::assets;
 class EnermyComponent : public Component
 {
 public:
+    TransformComponent *transform;
     int maxHealth, curHealth;
     int collisionDamage = 0;
     Vector2D wayToPlayer;
     int lastTakenDamage = -1;
     SpriteComponent *sprite;
     int room = -1;
+    bool canShootProjectiles = false;
+    Uint32 countDown = 2000;
+    Uint32 lastShootPrj = 0;
+    std::string prjtex;
 
-    EnermyComponent(int mH, int cD = 0)
+    EnermyComponent(int mH, int cD = 0, std::string id = "")
     {
         maxHealth = mH;
         curHealth = mH;
         collisionDamage = cD;
+        prjtex = id;
     }
-    
-    // EnermyComponent(int mH, int cD = 0, int r)
+
+    // EnermyComponent(int mH, int cD = 0, bool sP, int countDown)
     // {
     //     maxHealth = mH;
     //     curHealth = mH;
     //     collisionDamage = cD;
-    //     room = r;
+    //     canShootProjectiles = sP;
     // }
 
     ~EnermyComponent(){};
@@ -44,6 +50,7 @@ public:
         {
             entity->addComponent<SpriteComponent>();
         }
+        transform = &entity->getComponent<TransformComponent>();
         sprite = &entity->getComponent<SpriteComponent>();
     }
 
@@ -57,12 +64,22 @@ public:
         }
     }
 
+    void shoot()
+    {
+        wayToPlayer.normalize();
+        if (wayToPlayer.len() > 0)
+        {
+            // Game::assets->CreatProjectile(transform.position, wayToPlayer, (int)1e9, BULLET_SPEED, prjtex);
+            Game::assets->CreatProjectile(transform->position, wayToPlayer, (int)1000, BULLET_SPEED, "ice_projectile");
+        }
+    }
+
     void update() override
     {
         wayToPlayer.x = player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x;
         wayToPlayer.y = player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y;
 
-        if (wayToPlayer.len() > MAX_DISTANCE_FROM_ENERMY_TILE * 16 * Game::total_scale)// distance to detect player
+        if (wayToPlayer.len() > MAX_DISTANCE_FROM_ENERMY_TILE * 16 * Game::total_scale) // distance to detect player
         {
             entity->getComponent<TransformComponent>().velocity.Zero();
         }
@@ -70,9 +87,14 @@ public:
         {
             double sinA = wayToPlayer.x / wayToPlayer.len();
             double cosA = wayToPlayer.y / wayToPlayer.len();
-            // entity->getComponent<TransformComponent>().velocity = wayToPlayer.normalize();
             entity->getComponent<TransformComponent>().velocity.x = sinA;
             entity->getComponent<TransformComponent>().velocity.y = cosA;
+        }
+        // shoot prj tile
+        if (SDL_GetTicks() - lastShootPrj > countDown)
+        {
+            lastShootPrj = SDL_GetTicks();
+            shoot();
         }
     }
 };

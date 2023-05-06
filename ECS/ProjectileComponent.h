@@ -7,11 +7,12 @@
 class ProjectileComponent : public Component
 {
 public:
-    ProjectileComponent(int rng, int sp, Vector2D vel)
+    ProjectileComponent(int rng, int sp, Vector2D vel, int dmg)
     {
         range = rng;
         speed = sp;
         velocity = vel;
+        damage = dmg;
     }
     ~ProjectileComponent(){};
 
@@ -31,16 +32,11 @@ public:
             std::cout << "[ProjectileComponent.h]: Out of range" << std::endl;
             entity->destroy();
         }
-        else if (transform->position.x > Game::camera.x + Game::camera.w ||
-                 transform->position.x < Game::camera.x ||
-                 transform->position.y > Game::camera.y + Game::camera.h ||
-                 transform->position.y < Game::camera.y)
-        {
-            std::cout << "[ProjectileComponent.h]: Out of Camera" << std::endl;
-            entity->destroy();
-        }
     }
-
+    int dame()
+    {
+        return damage;
+    }
 private:
     TransformComponent *transform;
 
@@ -48,4 +44,7 @@ private:
     int speed = 0;
     int distance = 0;
     Vector2D velocity;
+    Uint32 destroyTime;
+    bool isDestroying = false;
+    int damage = 0;
 };

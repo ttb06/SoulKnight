@@ -15,7 +15,8 @@ public:
     double len() const;
     double getAngleRadians();
     double getAngleDegrees();
-
+    double getAngleDegrees360();
+    
     void normalize();
 
     Vector2D &Add(const Vector2D &vec);

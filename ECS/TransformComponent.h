@@ -40,18 +40,17 @@ public:
     {
         height = h;
         width = w;
-        position.x = SCREEN_WIDTH / 2 - 16;
-        position.y = SCREEN_HEIGHT / 2 - 28;
+        setPosition(0, 0);
         scale = sc;
     }
 
     TransformComponent(int x, int y, int w, int h, int scl)
     {
-        position.x = x + SCREEN_WIDTH / 2 - w;
-        position.y = y + SCREEN_HEIGHT / 2 - h;
+        setPosition(x, y);
         height = h;
         width = w;
         scale = scl;
+        if (x == 0 && y == 0) std::cout<< "proj" << std::endl;
     }
 
     TransformComponent(int x, int y, int w, int h, int scl, int spd)
@@ -97,7 +96,6 @@ public:
             Vector2D distance;
             distance.x = position.x - destPos.x;
             distance.y = position.y + 12 * Game::total_scale - destPos.y;
-            std::cout << "[transform] current distance: " << distance.len() << "  " << distance.x << " " << distance.y << std::endl;
             if (distance.len() < speed)
             {
                 position.x = destPos.x;
