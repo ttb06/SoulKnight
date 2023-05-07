@@ -28,7 +28,12 @@ public:
         // run
         if (entity->hasComponent<HUDComponent>())
         {
-            if (entity->getComponent<HUDComponent>().isImmortal == true)
+            if (entity->getComponent<HUDComponent>().curHealth <= 0)
+            {
+                sprite->Play("Dead");
+                entity->getComponent<TransformComponent>().velocity.Zero();
+            }
+            else if (entity->getComponent<HUDComponent>().isImmortal == true)
             {
                 sprite->Play("Hit");
             }
@@ -39,7 +44,7 @@ public:
             else
             {
                 if (entity->getComponent<MouseController>().path.empty() || !entity->getComponent<TransformComponent>().autoMove)
-                sprite->Play("Idle");
+                    sprite->Play("Idle");
             }
         }
         else
