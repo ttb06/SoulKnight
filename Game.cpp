@@ -23,6 +23,8 @@ int Game::collisionMap[105][105];
 int Game::visit[maxN][maxN];
 int Game::numberOfRooms;
 vector<int> Game::roomEnermies;
+int Game::curRoom;
+
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
 bool Game::isRunning = false;
@@ -48,6 +50,7 @@ std::vector<Entity *> &weapons(manager.getGroup(Game::groupWeapons));
 std::vector<Entity *> &highertiles(manager.getGroup(Game::groupHigherMap));
 std::vector<Entity *> &animtiles(manager.getGroup(Game::groupAnimMap));
 std::vector<Entity *> &doortiles(manager.getGroup(Game::groupDoor));
+std::vector<Entity *> &rooms(manager.getGroup(Game::groupRoom));
 
 void Game::init(const char *title, int xPos, int yPos, int width, int height, bool fullScreen)
 {
@@ -91,17 +94,15 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
     assets->AddTexture("katana", "assets/katana_slash.png");
-    
+
     assets->AddTexture("big_demon", "assets/big_demon_anims.png");
     assets->AddTexture("big_zombie", "assets/big_zombie_anims.png");
     assets->AddTexture("fire_projectile", "assets/projectile_fire_ball.png");
     assets->AddTexture("ice_projectile", "assets/projectile_ice_ball.png");
     assets->AddTexture("skull", "assets/skull.png");
 
-    
     assets->AddTexture("ui_heart", "assets/ui_heart.png");
     assets->AddTexture("ui_armor", "assets/ui_armor.png");
-    
 
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
@@ -159,31 +160,47 @@ void Game::update()
                                                           player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2);
     // store old information
 
-    cout << "[game] so quai trong phong 1: " << Game::roomEnermies[1] << endl;
-    for (int i = 0; i < doortiles.size(); i ++) 
+    for (int i = 0; i < doortiles.size(); i++)
     {
         auto &d = doortiles[i];
         if (Game::roomEnermies[d->getComponent<TileComponent>().getRoom()] == 0)
         {
             int xx = doortiles[i]->getComponent<TileComponent>().position.x / 16 / Game::total_scale;
-            // int xx = 0, yy = 0;
-            // cout << xx << endl << endl;
             int yy = doortiles[i]->getComponent<TileComponent>().position.y / 16 / Game::total_scale;
             Game::collisionMap[xx][yy] = 0;
             doortiles.erase(doortiles.begin() + i);
             doorcolliders.erase(doorcolliders.begin() + i);
         }
     }
-    for (auto&d: doortiles)
-    {
-        // auto &d = doortiles[i];
-        cout <<  d->getComponent<TileComponent>().getRoom() << "    ";
-    }
-    cout << endl;
+    // for (auto &d : doortiles)
+    // {
+    //     cout << d->getComponent<TileComponent>().getRoom() << "    ";
+    // }
+    // cout << endl;
+
     if (player.getComponent<HUDComponent>().curHealth <= 0)
     {
-        Game::isRunning = false;
-        std::cout << "[Game.cpp]: Running out of health" << std::endl;
+        // Game::isRunning = false;
+        // std::cout << "[Game.cpp]: Running out of health" << std::endl;
+    }
+
+    Game::curRoom = -1;
+    for (int i = 0; i < rooms.size(); i++)
+    {
+        if (Collision::AABB(rooms[i]->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
+        {
+            Game::curRoom = i;
+        }
+    }
+
+    for (auto &e : enermies)
+    {
+        if (e->getComponent<EnermyComponent>().room != Game::curRoom)
+        {
+            e->getComponent<EnermyComponent>().deactive();
+        }
+        else
+        e->getComponent<EnermyComponent>().active();;
     }
 
     SDL_Rect playerCol = player.getComponent<ColliderComponent>().collider;
@@ -199,7 +216,7 @@ void Game::update()
     label.getComponent<UILabel>().deleteTexture();
     label.getComponent<UILabel>().SetLabelText(ss.str(), "candara");
 
-    for (auto &c: doorcolliders)
+    for (auto &c : doorcolliders)
     {
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
@@ -362,7 +379,7 @@ void Game::render()
         t->draw();
     }
 
-    for (auto &d: doortiles)
+    for (auto &d : doortiles)
     {
         d->draw();
     }
@@ -373,6 +390,12 @@ void Game::render()
         // if (Collision::AABB(c->getComponent<ColliderComponent>().collider, player.getComponent<ColliderComponent>().collider))
         c->draw();
     }
+
+    // for (int i = 0; i < Game::roomCoordinate.size(); i ++)
+    // {
+    //     auto c = Game::roomCoordinate[i];
+    //     SDL_RenderFillRect(Game::renderer, &c);
+    // }
 
     // draw hud to the topmost
     player.getComponent<HUDComponent>().draw();

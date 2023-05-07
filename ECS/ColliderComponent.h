@@ -42,7 +42,14 @@ public:
             initedCollider = true;
         }
     }
-
+    ColliderComponent(std::string t, int xPos, int yPos, int w, int h, bool isPlayer = false)
+    {
+        tag = t;
+        collider.x = xPos;
+        collider.y = yPos;
+        collider.w = w;
+        collider.h = h;
+    }
     void init() override
     {
         if (!entity->hasComponent<TransformComponent>())
@@ -59,7 +66,7 @@ public:
 
     void update() override
     {
-        if (tag != "terrain")
+        if (tag != "terrain" && tag != "room")
         {
             if (!initedCollider)
             {
@@ -85,6 +92,11 @@ public:
     {
         if (tag == "terrain")
             TextureManager::Draw(tex, srcR, destR, SDL_FLIP_NONE);
+        if (tag == "room")
+        {
+            std::cout << collider.x << "    " << collider.y << std::endl;
+            SDL_RenderFillRect(Game::renderer, &collider);
+        }
         if (tag == "player")
         {
             SDL_Rect destt = collider;

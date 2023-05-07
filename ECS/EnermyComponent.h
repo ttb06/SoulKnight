@@ -19,8 +19,9 @@ public:
     Uint32 countDown = 2000;
     Uint32 lastShootPrj = 0;
     std::string prjtex;
+    bool isActive = false;
 
-    EnermyComponent(int mH, int cD , std::string id, int r)
+    EnermyComponent(int mH, int cD, std::string id, int r)
     {
         maxHealth = mH;
         curHealth = mH;
@@ -59,7 +60,7 @@ public:
         if (curHealth <= 0)
         {
             entity->destroy();
-            Game::roomEnermies[room] --;
+            Game::roomEnermies[room]--;
             Game::assets->AddSkull(entity->getComponent<TransformComponent>().position.x, entity->getComponent<TransformComponent>().position.y, "skull");
         }
     }
@@ -68,14 +69,17 @@ public:
     {
         if (wayToPlayer.len() > 0)
         {
-            // Game::assets->CreatProjectile(transform.position, wayToPlayer, (int)1e9, BULLET_SPEED, prjtex);
-            Vector2D wtp (player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x,player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y);
-            Game::assets->CreatProjectile(entity->getComponent<TransformComponent>().position, wtp, (int)1000, BULLET_SPEED, prjtex);
+            Vector2D wtp(player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x, player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y);
+            Vector2D pos = entity->getComponent<TransformComponent>().position;
+            pos.x += entity->getComponent<TransformComponent>().width / 2;
+            pos.y += entity->getComponent<TransformComponent>().height / 2;
+            Game::assets->CreatProjectile(pos, wtp, (int)1000, BULLET_SPEED, prjtex);
         }
     }
 
     void update() override
     {
+        if (!isActive) return;
         wayToPlayer.x = player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x;
         wayToPlayer.y = player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y;
 
@@ -96,5 +100,14 @@ public:
             lastShootPrj = SDL_GetTicks();
             shoot();
         }
+    }
+    void deactive()
+    {
+        entity->getComponent<TransformComponent>().velocity.Zero();
+        isActive = false;
+    }
+    void active()
+    {
+        isActive = true;
     }
 };
