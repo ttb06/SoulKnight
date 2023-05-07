@@ -215,7 +215,10 @@ void Game::update()
         weapon.getComponent<TransformComponent>().setPosition(player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2,
                                                               player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2);
         // store old information
-
+        if (player.getComponent<HUDComponent>().curHealth == 0)
+        {
+            curLevel = 1e9;
+        }
         for (int i = 0; i < doortiles.size(); i++)
         {
             auto &d = doortiles[i];
@@ -480,10 +483,19 @@ void Game::render()
 
         // label.draw();
     }
-    if (curLevel > NUMBER_OF_LEVEL)
+    if (curLevel == NUMBER_OF_LEVEL + 1)
     {
         player.getComponent<HUDComponent>().curHealth = 0;
         SDL_Texture *gameOver = assets->GetTexture("win");
+        SDL_Rect dest = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        SDL_Rect src = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        TextureManager::Draw(gameOver, src, dest, SDL_FLIP_NONE);
+    }
+
+    if (curLevel > NUMBER_OF_LEVEL + 1)
+    {
+        player.getComponent<HUDComponent>().curHealth = 0;
+        SDL_Texture *gameOver = assets->GetTexture("gameover");
         SDL_Rect dest = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         SDL_Rect src = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         TextureManager::Draw(gameOver, src, dest, SDL_FLIP_NONE);
