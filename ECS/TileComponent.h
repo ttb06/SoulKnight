@@ -13,6 +13,9 @@ public:
     Vector2D position;
     bool isAnim = false;
 
+    int room = -1;
+    bool isRoom = false;
+
     TileComponent() = default;
 
     ~TileComponent()
@@ -20,7 +23,7 @@ public:
         SDL_DestroyTexture(texture);
     }
 
-    TileComponent(int srcX, int srcY, int xPos, int yPos, int tsize, int tscale, std::string id, bool anim = false)
+    TileComponent(int srcX, int srcY, int xPos, int yPos, int tsize, int tscale, std::string id, bool anim = false, int r = -1)
     {
         texture = Game::assets->GetTexture(id);
 
@@ -40,6 +43,7 @@ public:
         {
             firstRect = srcRect;
         }
+        room = r;
     }
 
     void update() override
@@ -55,5 +59,10 @@ public:
     void draw() override
     {
         TextureManager::Draw(texture, srcRect, destRect, SDL_FLIP_NONE);
+    }
+
+    int getRoom()
+    {
+        return room;
     }
 };

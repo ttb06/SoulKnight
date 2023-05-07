@@ -21,7 +21,8 @@ int Game::total_scale = 3;
 int Game::curLevel = 1;
 int Game::collisionMap[105][105];
 int Game::visit[maxN][maxN];
-
+int Game::numberOfRooms;
+vector<int> Game::roomEnermies;
 SDL_Rect Game::camera = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
 bool Game::isRunning = false;
@@ -40,11 +41,13 @@ Game::~Game() {}
 std::vector<Entity *> &tiles(manager.getGroup(Game::groupMap));
 std::vector<Entity *> &players(manager.getGroup(Game::groupPlayers));
 std::vector<Entity *> &colliders(manager.getGroup(Game::groupColliders));
+std::vector<Entity *> &doorcolliders(manager.getGroup(Game::groupDoorColliders));
 std::vector<Entity *> &projectiles(manager.getGroup(Game::groupProjectiles));
 std::vector<Entity *> &enermies(manager.getGroup(Game::groupEnermies));
 std::vector<Entity *> &weapons(manager.getGroup(Game::groupWeapons));
 std::vector<Entity *> &highertiles(manager.getGroup(Game::groupHigherMap));
 std::vector<Entity *> &animtiles(manager.getGroup(Game::groupAnimMap));
+std::vector<Entity *> &doortiles(manager.getGroup(Game::groupDoor));
 
 void Game::init(const char *title, int xPos, int yPos, int width, int height, bool fullScreen)
 {
@@ -83,7 +86,8 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     //  add Texture
     assets->AddTexture("terrain", "assets/tiles_assets_final.png");
     assets->AddTexture("projectile", "assets/proj.png");
-      
+    assets->AddTexture("door", "assets/door.png");
+
     assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
     assets->AddTexture("katana", "assets/katana_slash.png");
@@ -154,6 +158,28 @@ void Game::update()
     weapon.getComponent<TransformComponent>().setPosition(player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2,
                                                           player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2);
     // store old information
+
+    cout << "[game] so quai trong phong 1: " << Game::roomEnermies[1] << endl;
+    for (int i = 0; i < doortiles.size(); i ++) 
+    {
+        auto &d = doortiles[i];
+        if (Game::roomEnermies[d->getComponent<TileComponent>().getRoom()] == 0)
+        {
+            int xx = doortiles[i]->getComponent<TileComponent>().position.x / 16 / Game::total_scale;
+            // int xx = 0, yy = 0;
+            // cout << xx << endl << endl;
+            int yy = doortiles[i]->getComponent<TileComponent>().position.y / 16 / Game::total_scale;
+            Game::collisionMap[xx][yy] = 0;
+            doortiles.erase(doortiles.begin() + i);
+            doorcolliders.erase(doorcolliders.begin() + i);
+        }
+    }
+    for (auto&d: doortiles)
+    {
+        // auto &d = doortiles[i];
+        cout <<  d->getComponent<TileComponent>().getRoom() << "    ";
+    }
+    cout << endl;
     if (player.getComponent<HUDComponent>().curHealth <= 0)
     {
         Game::isRunning = false;
@@ -172,6 +198,29 @@ void Game::update()
     ss << "Player Position: " << playerPos;
     label.getComponent<UILabel>().deleteTexture();
     label.getComponent<UILabel>().SetLabelText(ss.str(), "candara");
+
+    for (auto &c: doorcolliders)
+    {
+        SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
+        if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
+        {
+            player.getComponent<TransformComponent>().position.x -= playerVel.x * playerSpeed;
+            player.getComponent<ColliderComponent>().update();
+            if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
+            {
+                player.getComponent<TransformComponent>().position.x += playerVel.x * playerSpeed;
+            }
+
+            player.getComponent<TransformComponent>().position.y -= playerVel.y * playerSpeed;
+            player.getComponent<ColliderComponent>().update();
+            if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
+            {
+                player.getComponent<TransformComponent>().position.y += playerVel.y * playerSpeed;
+            }
+            player.getComponent<ColliderComponent>().update();
+            break;
+        }
+    }
 
     for (auto &c : colliders)
     {
@@ -311,6 +360,11 @@ void Game::render()
     for (auto &t : highertiles)
     {
         t->draw();
+    }
+
+    for (auto &d: doortiles)
+    {
+        d->draw();
     }
 
     // render colliders

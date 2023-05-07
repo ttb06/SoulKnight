@@ -23,6 +23,7 @@ public:
     {
         if (Game::event.type == SDL_KEYDOWN)
         {
+            entity->getComponent<TransformComponent>().autoMove = false;
             switch (Game::event.key.keysym.sym)
             {
             case SDLK_t:

@@ -20,7 +20,7 @@ public:
     Uint32 lastShootPrj = 0;
     std::string prjtex;
 
-    EnermyComponent(int mH, int cD = 0, std::string id = "", int r = 0)
+    EnermyComponent(int mH, int cD , std::string id, int r)
     {
         maxHealth = mH;
         curHealth = mH;
@@ -59,6 +59,7 @@ public:
         if (curHealth <= 0)
         {
             entity->destroy();
+            Game::roomEnermies[room] --;
             Game::assets->AddSkull(entity->getComponent<TransformComponent>().position.x, entity->getComponent<TransformComponent>().position.y, "skull");
         }
     }

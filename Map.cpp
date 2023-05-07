@@ -82,7 +82,6 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
     }
 
     getline(mapFile, line);
-
     // load Collision map into Map and Game::collisionMap for path finding with bfs
     for (int y = 0; y < sizeY; y++)
     {
@@ -165,13 +164,13 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
             // Vi vay, so quai max la 10, se cap nhat cach tinh moi sau
             int enermyIndex = idx % 10;
             std::cout << enermyIndex << std::endl;
-            int room = idx / 10;
+            int room = idx % 10;
             Vector2D pos(x * scaledSize, y * scaledSize);
             std::string enermyID, prjID;
             int width, height, speed;
             switch (enermyIndex)
             {
-                case 2:
+            case 2:
                 enermyID = "big_demon";
                 prjID = "fire_projectile";
                 speed = 1;
@@ -179,7 +178,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
                 height = 36;
                 break;
 
-                case 1:
+            case 1:
                 enermyID = "big_zombie";
                 prjID = "ice_projectile";
                 speed = 1;
@@ -190,6 +189,63 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 
             Game::assets->CreateEnermy(pos, speed, width, height, enermyID, 7, 1, prjID, room);
         }
+    }
+
+    getline(mapFile, line);
+    // load room "door"
+    for (int y = 0; y < sizeY; y++)
+    {
+        getline(mapFile, line);
+        int cnt = 0;
+        for (int x = 0; x < sizeX; x++)
+        {
+            std::string index = "";
+            for (; cnt < line.size(); cnt++)
+            {
+                if (line[cnt] != ',')
+                    index.push_back(line[cnt]);
+                else
+                    break;
+            }
+            cnt++;
+
+            srcY = (atoi(index.c_str()) / 10) * tileSize;
+            srcX = (atoi(index.c_str()) % 10) * tileSize;
+
+            if (srcY == 0 && srcX == 0)
+                continue;
+            std::cout << "[map] door : " << x << "   " << y << std::endl;
+            Game::collisionMap[x][y] = bfs::block;
+            srcY = 3 * tileSize;
+            srcX = 2 * tileSize;
+            AddDoorTile(srcX, srcY, x * scaledSize, y * scaledSize, atoi(index.c_str()));
+
+            auto &tCol(manager.addEntity());
+            tCol.addComponent<ColliderComponent>("terrain", x * scaledSize, y * scaledSize, scaledSize);
+            tCol.addGroup(Game::groupDoorColliders);
+        }
+    }
+
+    getline(mapFile, line);
+    // load number of room and enermies in room
+    // start from 1, and room 0 auto have 0 enermies
+    mapFile >> Game::numberOfRooms;
+    Game::roomEnermies.clear();
+    for (int i = 0; i < Game::numberOfRooms; i++)
+    {
+        if (i == 0)
+            Game::roomEnermies.push_back(0);
+        else
+        {
+            int t;
+            mapFile >> t;
+            Game::roomEnermies.push_back(t);
+        }
+    }
+
+    for (auto r: Game::roomEnermies)
+    {
+        std::cout << "[map] room " << r << std::endl;
     }
     mapFile.close();
 }
@@ -215,4 +271,12 @@ void Map::AddAnimTile(int srcX, int srcY, int xPos, int yPos)
 
     tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, tileSize, mapScale, texID, true);
     tile.addGroup(Game::groupAnimMap);
+}
+
+void Map::AddDoorTile(int srcX, int srcY, int xPos, int yPos, int room)
+{
+    auto &tile(manager.addEntity());
+
+    tile.addComponent<TileComponent>(srcX, srcY, xPos, yPos, tileSize, mapScale, texID, false, room);
+    tile.addGroup(Game::groupDoor);
 }
