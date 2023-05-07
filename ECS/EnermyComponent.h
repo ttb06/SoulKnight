@@ -10,12 +10,12 @@ extern Entity &player;
 class EnermyComponent : public Component
 {
 public:
-    TransformComponent *transform;
+    // TransformComponent *transform;
     int maxHealth, curHealth;
     int collisionDamage = 0;
     Vector2D wayToPlayer;
     int lastTakenDamage = -1;
-    SpriteComponent *sprite;
+    // SpriteComponent *sprite;
     int room = -1;
     bool canShootProjectiles = false;
     Uint32 countDown = 2000;
@@ -50,8 +50,8 @@ public:
         {
             entity->addComponent<SpriteComponent>();
         }
-        transform = &entity->getComponent<TransformComponent>();
-        sprite = &entity->getComponent<SpriteComponent>();
+        // transform = &entity->getComponent<TransformComponent>();
+        // sprite = &entity->getComponent<SpriteComponent>();
     }
 
     void takeDamage(int dame)
@@ -69,8 +69,8 @@ public:
         if (wayToPlayer.len() > 0)
         {
             // Game::assets->CreatProjectile(transform.position, wayToPlayer, (int)1e9, BULLET_SPEED, prjtex);
-            Vector2D wtp (player.getComponent<TransformComponent>().position.x - transform->position.x,player.getComponent<TransformComponent>().position.y - transform->position.y);
-            Game::assets->CreatProjectile(transform->position, wtp, (int)1000, BULLET_SPEED, prjtex);
+            Vector2D wtp (player.getComponent<TransformComponent>().position.x - entity->getComponent<TransformComponent>().position.x,player.getComponent<TransformComponent>().position.y - entity->getComponent<TransformComponent>().position.y);
+            Game::assets->CreatProjectile(entity->getComponent<TransformComponent>().position, wtp, (int)1000, BULLET_SPEED, prjtex);
         }
     }
 
