@@ -34,7 +34,7 @@ public:
     static AssetManager *assets;
     static int total_scale;
     static int numberOfRooms;
-    static vector<vector<int>> roomCoordinate;
+    static int curRoom;
     static vector<int> roomEnermies; 
     
     //bfs
@@ -51,6 +51,7 @@ public:
         groupDoorColliders,
         groupProjectiles,
         groupEnermies,
+        groupRoom,
         groupWeapons
     };
 

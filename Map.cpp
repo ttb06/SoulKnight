@@ -19,6 +19,11 @@ Map::~Map()
 {
 }
 
+SDL_Rect returnRect(int x1, int y1, int x2, int y2)
+{
+    return SDL_Rect({x1, y1, x2 - x1 + 1, y2 - y1 + 1});
+}
+
 void Map::LoadMap(std::string path, int sizeX, int sizeY)
 {
     char c;
@@ -243,10 +248,27 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
         }
     }
 
-    for (auto r: Game::roomEnermies)
+    getline(mapFile, line);
+    for (int i = 0; i < Game::numberOfRooms; i++)
     {
-        std::cout << "[map] room " << r << std::endl;
+        int x1, y1, x2, y2;
+        mapFile >> x1 >> y1 >> x2 >> y2;
+        // std::cout << x1 << y1 << x2 << y2 << std::endl;
+        x1 *= (scaledSize);
+        y1 *= (scaledSize);
+        x2 *= (scaledSize);
+        y2 *= (scaledSize);
+        auto &room(manager.addEntity());
+        // ColliderComponent(std::string t, int xPos, int yPos, int w, int h, bool isPlayer = false)
+        room.addComponent<ColliderComponent>("room", x1, y1, x2 - x1, y2 - y1, false);
+        room.addGroup(Game::groupRoom);
+        std::cout << room.getComponent<ColliderComponent>().collider.x << " " << room.getComponent<ColliderComponent>().collider.y << std::endl;
     }
+
+    // for (auto r : Game::roomCoordinate)
+    // {
+    //     std::cout << r.x << " " << r.y << " " << r.w << " " << r.h << std::endl;
+    // }
     mapFile.close();
 }
 

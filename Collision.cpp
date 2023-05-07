@@ -26,9 +26,7 @@ bool Collision::Circle(const int xPos, const int yPos, Vector2D rPos, const SDL_
     int yDest = dest.y + dest.h / 2;
     rPos = rPos.Abs();
     double rDest = sqrt((dest.w / 2) * (dest.w / 2) + (dest.h / 2) * (dest.h / 2));
-    // Vector2D distance(abs(xDest - xPos), abs(yDest - yPos));
     Vector2D distance((xPos - xDest), (yPos - yDest));
-    // distance = distance.Abs();
     if (distance.len() > rPos.len() + rDest)
     {
         return false;
