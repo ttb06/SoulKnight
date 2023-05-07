@@ -15,7 +15,7 @@ public:
     // gameobject
 
     void CreatProjectile(Vector2D pos, Vector2D vel, int range, int speed, std::string id);
-    void CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD, std::string prjtile);
+    void CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD, std::string prjtile, int r);
     void AddSkull(int xPos, int yPos, std::string id);
 
     // Texture management

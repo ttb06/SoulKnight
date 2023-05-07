@@ -6,28 +6,27 @@
 #include "math.h"
 
 extern Entity &player;
-// extern AssetManager *Game::assets;
+
 class EnermyComponent : public Component
 {
 public:
-    // TransformComponent *transform;
     int maxHealth, curHealth;
     int collisionDamage = 0;
     Vector2D wayToPlayer;
     int lastTakenDamage = -1;
-    // SpriteComponent *sprite;
     int room = -1;
     bool canShootProjectiles = false;
     Uint32 countDown = 2000;
     Uint32 lastShootPrj = 0;
     std::string prjtex;
 
-    EnermyComponent(int mH, int cD = 0, std::string id = "")
+    EnermyComponent(int mH, int cD = 0, std::string id = "", int r = 0)
     {
         maxHealth = mH;
         curHealth = mH;
         collisionDamage = cD;
         prjtex = id;
+        room = r;
     }
 
     // EnermyComponent(int mH, int cD = 0, bool sP, int countDown)

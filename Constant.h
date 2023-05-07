@@ -25,7 +25,7 @@ const int RANGE_MELE_WEAPON = 25;
 
 const int TILE_ANIM_FRAMES = 3;
 const int TILE_ANIM_SPEED = 100;
-
+const int TIME_RESTORE_ARMOR = 10000;
 const int BULLET_SPEED = 4;
 
 const int PROJECTILES_FLYING_ANIM_FRAMES = 7;
