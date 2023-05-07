@@ -68,7 +68,6 @@ public:
         destRect.w = srcRect.w * transform->scale;
         destRect.h = srcRect.h * transform->scale;
 
-        std::cout << angle << std::endl;
         if (transform->velocity.x > 0)
         {
             spriteFlip = SDL_FLIP_NONE;

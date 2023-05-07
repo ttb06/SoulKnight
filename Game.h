@@ -25,7 +25,7 @@ public:
     void render();
     void clean();
 
-    static int level;
+    static int curLevel;
     static int collisionMap[105][105];
     static SDL_Renderer *renderer;
     static SDL_Event event;
@@ -33,7 +33,7 @@ public:
     static SDL_Rect camera;
     static AssetManager *assets;
     static int total_scale;
-
+    
     static vector<vector<int>> roomCoordinate;
     static vector<int> roomEnermies; 
     

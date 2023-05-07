@@ -18,7 +18,7 @@ Manager manager;
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 int Game::total_scale = 3;
-int Game::level = 1;
+int Game::curLevel = 1;
 int Game::collisionMap[105][105];
 int Game::visit[maxN][maxN];
 
@@ -78,11 +78,8 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
         std::cout << "Error: SDL_TTF" << std::endl;
     }
 
-    // set icon
-    SDL_Surface* icon = SDL_LoadBMP("assets/skull.png");
-    SDL_SetWindowIcon(window, icon);
-    SDL_FreeSurface (icon);
     //  assets implenemtation
+
     //  add Texture
     assets->AddTexture("terrain", "assets/tiles_assets_final.png");
     assets->AddTexture("player", "assets/knight_anims.png");
@@ -95,6 +92,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("ui_armor", "assets/ui_armor.png");
     assets->AddTexture("fire_projectile", "assets/projectile_fire_ball.png");
     assets->AddTexture("ice_projectile", "assets/projectile_ice_ball.png");
+
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
 
@@ -116,6 +114,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     //create weapon
     weapon.addComponent<DirectionComponent>();
+    weapon.addComponent<TransformComponent>();
     weapon.addComponent<WeaponComponent>("katana", 29, 6, Game::total_scale);
     weapon.addComponent<WeaponSpriteComponent>("katana", 29, 6, Game::total_scale);
     weapon.addComponent<WeaponKeyboardController>();
@@ -140,7 +139,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     //     }
     // }
     // assets->CreatProjectile(Vector2D(0, 0), Vector2D(1, 1), 200, 1, "ice_projectile");
-    assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
+    // assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
     // assets->CreateEnermy(Vector2D(2000, 2000), 1, 32, 36, "big_demon", 7, 1);
     // assets->CreateEnermy(Vector2D(500, 700), 1, 32, 36, "big_demon", 7, 1);
     // assets->CreateEnermy(Vector2D(500, 900), 1, 32, 36, "big_demon", 7, 1);
@@ -164,8 +163,12 @@ void Game::handleEvents()
     }
 }
 SDL_Rect Cur;
+
+
 void Game::update()
 {
+    weapon.getComponent<TransformComponent>().setPosition(player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width/2, 
+    player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height/2);
     // store old information
     if (player.getComponent<HUDComponent>().curHealth <= 0)
     {
@@ -233,14 +236,14 @@ void Game::update()
 
     Vector2D radiusWeapon = player.getComponent<DirectionComponent>().vec;
     radiusWeapon.normalize();
-    radiusWeapon.x *= RANGE_MELE_WEAPON;
-    radiusWeapon.y *= RANGE_MELE_WEAPON;
-
+    radiusWeapon.x *= RANGE_MELE_WEAPON * Game::total_scale;
+    radiusWeapon.y *= RANGE_MELE_WEAPON * Game::total_scale;
+    
     for (auto &e : enermies)
     {
         if (weapon.getComponent<WeaponComponent>().isAtacking &&
             weapon.getComponent<WeaponComponent>().attackCounter != e->getComponent<EnermyComponent>().lastTakenDamage &&
-            (Collision::Circle((int)player.getComponent<TransformComponent>().position.x, (int)player.getComponent<TransformComponent>().position.y, radiusWeapon, e->getComponent<ColliderComponent>().collider)))
+            (Collision::Circle((int)weapon.getComponent<TransformComponent>().position.x, (int)weapon.getComponent<TransformComponent>().position.y, radiusWeapon.Abs(), e->getComponent<ColliderComponent>().collider)))
         {
             std::cout << "[Game]: Current health: " << e->getComponent<EnermyComponent>().curHealth << endl;
             e->getComponent<EnermyComponent>().lastTakenDamage = weapon.getComponent<WeaponComponent>().attackCounter;
@@ -250,11 +253,13 @@ void Game::update()
 
     for (auto &p : projectiles)
     {
-        // if (weapon.getComponent<WeaponComponent>().isAtacking &&
-        //     (Collision::AABB(p->getComponent<ColliderComponent>().collider, weaponCollider)))
-        // {
-        //     p->destroy();
-        // }
+        // std::cout << "[Game] Position of projectile: " << p->getComponent<TransformComponent>().position << "      "
+        // << "[Game] player Position: " << player.getComponent<TransformComponent>().position << endl;
+        if (weapon.getComponent<WeaponComponent>().isAtacking &&
+            Collision::Circle((int)weapon.getComponent<TransformComponent>().position.x, (int)weapon.getComponent<TransformComponent>().position.y, radiusWeapon.Abs(), p->getComponent<ColliderComponent>().collider))
+        {
+            p->getComponent<ProjectileSpriteComponent>().destroy();
+        }
     }
 
     float newXposCam;
@@ -263,8 +268,6 @@ void Game::update()
     newXposCam = player.getComponent<TransformComponent>().position.x - SCREEN_WIDTH / 2;
     newYposCam = player.getComponent<TransformComponent>().position.y - SCREEN_HEIGHT / 2;
 
-    // camera.x = player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2 - camera.w / 2;
-    // camera.y = player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2 - camera.h / 2;
     camera.x = camera.x + (newXposCam - camera.x) * SMOOTHING_FACTOR;
     camera.y = camera.y + (newYposCam - camera.y) * SMOOTHING_FACTOR;
 
@@ -337,6 +340,7 @@ void Game::render()
         c->draw();
     }
 
+    player.getComponent<HUDComponent>().draw();
     label.draw();
     SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(Game::renderer, &Cur);

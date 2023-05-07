@@ -15,19 +15,19 @@ void AssetManager::CreatProjectile(Vector2D pos, Vector2D vel, int range, int sp
     auto &projectile(manager->addEntity());
     vel.normalize();
     projectile.addComponent<TransformComponent>(pos.x, pos.y, 16, 16, 2);
-    projectile.addComponent<ProjectileComponent>(range, speed, vel, PROJECTILES_DAMAGE);
+    projectile.addComponent<ProjectileComponent>(range, speed, vel, 0);//damage
     projectile.addComponent<ProjectileSpriteComponent>(id);
     projectile.addComponent<ColliderComponent>("Projectile");
     projectile.addGroup(Game::groupProjectiles);
 }
 
-void AssetManager::CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD)
+void AssetManager::CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD, std::string prjtile)
 {
     auto &enermy(manager->addEntity());
     enermy.addComponent<TransformComponent>(pos.x, pos.y, width, height, 3, spd);
     enermy.addComponent<SpriteComponent>(idSprite, true, false);
     enermy.addComponent<ColliderComponent>(idSprite);
-    enermy.addComponent<EnermyComponent>(mH, cD);
+    enermy.addComponent<EnermyComponent>(mH, cD, prjtile);
     enermy.addComponent<UpdateSpriteComponent>();
     enermy.addGroup(Game::groupEnermies);
 }

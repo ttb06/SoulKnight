@@ -137,9 +137,39 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
         }
     }
 
-    //get Room coordinate
-
+    // get enermies coordinate
+    //  /10: cach quai ban (projectiles)
+    //  %10: asset quai
     getline(mapFile, line);
+    for (int y = 0; y < sizeY; y++)
+    {
+        getline(mapFile, line);
+        int cnt = 0;
+        for (int x = 0; x < sizeX; x++)
+        {
+            std::string index = "";
+            for (; cnt < line.size(); cnt++)
+            {
+                if (line[cnt] != ',')
+                    index.push_back(line[cnt]);
+                else
+                    break;
+            }
+            cnt++;
+
+            srcY = (atoi(index.c_str()) / 10) * tileSize;
+            srcX = (atoi(index.c_str()) % 10) * tileSize;
+
+            if (srcY == 0 && srcX == 0)
+                continue;
+            Vector2D pos(x * scaledSize, y * scaledSize);
+            std::cout << "[Map] created enermy " << x << "   " << y << std::endl;
+            if (x == 46 && y == 21)
+            Game::assets->CreateEnermy(pos, 1, 32, 36, "big_demon", 7, 1, "ice_projectile");
+
+            // Game::assets->CreateEnermy(pos, 3, 32, 36, "big_demon", 7, 1);
+        }
+    }
 }
 
 void Map::AddTile(int srcX, int srcY, int xPos, int yPos)
