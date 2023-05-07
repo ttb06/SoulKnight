@@ -66,11 +66,11 @@ public:
 
     void shoot()
     {
-        wayToPlayer.normalize();
         if (wayToPlayer.len() > 0)
         {
             // Game::assets->CreatProjectile(transform.position, wayToPlayer, (int)1e9, BULLET_SPEED, prjtex);
-            Game::assets->CreatProjectile(transform->position, wayToPlayer, (int)1000, BULLET_SPEED, "ice_projectile");
+            Vector2D wtp (player.getComponent<TransformComponent>().position.x - transform->position.x,player.getComponent<TransformComponent>().position.y - transform->position.y);
+            Game::assets->CreatProjectile(transform->position, wtp, (int)1000, BULLET_SPEED, prjtex);
         }
     }
 

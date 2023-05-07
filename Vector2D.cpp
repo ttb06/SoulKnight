@@ -35,7 +35,13 @@ double Vector2D::getAngleDegrees360()
     double sin = tempy / len();
     return asin(sin) * 180 / M_PI;
 }
-
+Vector2D Vector2D::Abs()
+{
+    Vector2D res = *this;
+    res.x = abs(res.x);
+    res.y = abs(res.y);
+    return res;
+}
 double Vector2D::getAngleDegrees()
 {
     return getAngleRadians() * 180 / M_PI;

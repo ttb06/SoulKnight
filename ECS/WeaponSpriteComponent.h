@@ -19,7 +19,7 @@ private:
 
     int scale = 1;
     int frames = 0;
-    int speed = 100;
+    int speed = 70;
 
 public:
     int animIndex = 0;
