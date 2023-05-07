@@ -104,6 +104,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     assets->AddTexture("skull", "assets/skull.png");
     assets->AddTexture("gameover", "assets/gameover.png");
     assets->AddTexture("win", "assets/win.png");
+    assets->AddTexture("menu", "assets/background.png");
     assets->AddTexture("ui_heart", "assets/ui_heart.png");
     assets->AddTexture("ui_armor", "assets/ui_armor.png");
 
@@ -143,42 +144,6 @@ void Game::handleEvents()
 
 void clear_group()
 {
-    // for (auto &c : tiles)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : doorcolliders)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : colliders)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : projectiles)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : enermies)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : highertiles)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : animtiles)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : doortiles)
-    // {
-    //     c->destroy();
-    // }
-    // for (auto &c : rooms)
-    // {
-    //     c->destroy();
-    // }
     tiles.clear();
     colliders.clear();
     doorcolliders.clear();
@@ -238,7 +203,11 @@ void Game::update()
 {
     if (curLevel == 0)
     {
-        Game::loadNextLevel();
+        if (Game::event.type == SDL_MOUSEBUTTONDOWN)
+        {
+
+            Game::loadNextLevel();
+        }
     };
 
     if (curLevel > 0 && curLevel <= NUMBER_OF_LEVEL)
@@ -278,7 +247,7 @@ void Game::update()
             {
                 cout << "Dang o phong " << i << endl;
                 Game::curRoom = i;
-                if (curRoom == Game::numberOfRooms - 2)
+                if (curRoom == Game::numberOfRooms - 1)
                 {
                     cout << "[Game] DANG O PHONG CUOI" << endl;
                     loadNextLevel();
@@ -436,6 +405,14 @@ void Game::render()
 {
     SDL_RenderClear(renderer);
     // render map (floor, things which are always behind player)
+    if (curLevel == 0)
+    {
+        SDL_Texture *gameOver = assets->GetTexture("menu");
+        SDL_Rect dest = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        SDL_Rect src = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+        TextureManager::Draw(gameOver, src, dest, SDL_FLIP_NONE);
+    }
+
     if (curLevel > 0 && curLevel <= NUMBER_OF_LEVEL)
     {
         for (auto &t : tiles)
@@ -498,12 +475,6 @@ void Game::render()
         //     c->draw();
         // }
 
-        // for (int i = 0; i < Game::roomCoordinate.size(); i ++)
-        // {
-        //     auto c = Game::roomCoordinate[i];
-        //     SDL_RenderFillRect(Game::renderer, &c);
-        // }
-
         // draw hud to the topmost
         player.getComponent<HUDComponent>().draw();
 
@@ -511,7 +482,6 @@ void Game::render()
     }
     if (curLevel > NUMBER_OF_LEVEL)
     {
-        std::cout << "OKKKKKKKK" << std::endl;
         player.getComponent<HUDComponent>().curHealth = 0;
         SDL_Texture *gameOver = assets->GetTexture("win");
         SDL_Rect dest = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
