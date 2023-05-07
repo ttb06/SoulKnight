@@ -11,6 +11,8 @@ public:
     void AddTile(int srcX, int srcY, int xPos, int yPos);
     void AddHigherTile(int srcX, int srcY, int xPos, int yPos);
     void AddAnimTile(int srcX, int srcY, int xPos, int yPos);
+    void AddDoorTile(int srcX, int srcY, int xPos, int yPos, int room);
+
 private:
     std::string texID;
     int mapScale;

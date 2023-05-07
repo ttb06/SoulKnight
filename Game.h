@@ -33,7 +33,7 @@ public:
     static SDL_Rect camera;
     static AssetManager *assets;
     static int total_scale;
-    
+    static int numberOfRooms;
     static vector<vector<int>> roomCoordinate;
     static vector<int> roomEnermies; 
     
@@ -45,8 +45,10 @@ public:
         groupMap,
         groupHigherMap,
         groupAnimMap,
+        groupDoor,
         groupPlayers,
         groupColliders,
+        groupDoorColliders,
         groupProjectiles,
         groupEnermies,
         groupWeapons
