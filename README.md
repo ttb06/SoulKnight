@@ -35,4 +35,4 @@ This Game is built with ECS system which I learned from [`here`](https://www.you
 - Math (and VERY VERY MATH :< )
 
 ## Self-Assessment
-9 - 9.5
+8.5 - 9
