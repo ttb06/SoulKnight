@@ -169,7 +169,7 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
             // Vi vay, so quai max la 10, se cap nhat cach tinh moi sau
             int enermyIndex = idx % 10;
             std::cout << enermyIndex << std::endl;
-            int room = idx % 10;
+            int room = idx / 10 + 1;
             Vector2D pos(x * scaledSize, y * scaledSize);
             std::string enermyID, prjID;
             int width, height, speed;
