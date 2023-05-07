@@ -134,6 +134,10 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     SDL_Color white = {255, 255, 255, 255};
 
     label.addComponent<UILabel>(10, 10, "Init", "DungeonFont", white);
+    for (int i = 0; i < rooms.size(); i++)
+    {
+        cout << rooms[i]->getComponent<ColliderComponent>().collider.x << "   " << rooms[i]->getComponent<ColliderComponent>().collider.y << " " << rooms[i]->getComponent<ColliderComponent>().collider.w << " " << rooms[i]->getComponent<ColliderComponent>().collider.h << endl;
+    }
 }
 
 void Game::handleEvents()
@@ -156,6 +160,7 @@ SDL_Rect Cur;
 
 void Game::update()
 {
+    cout << Game::curRoom << endl;
     weapon.getComponent<TransformComponent>().setPosition(player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2,
                                                           player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2);
     // store old information

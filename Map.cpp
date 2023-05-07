@@ -260,15 +260,11 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
         y2 *= (scaledSize);
         auto &room(manager.addEntity());
         // ColliderComponent(std::string t, int xPos, int yPos, int w, int h, bool isPlayer = false)
-        room.addComponent<ColliderComponent>("room", x1, y1, x2 - x1, y2 - y1, false);
+        room.addComponent<ColliderComponent>("room", x1, y1, x2 - x1 + scaledSize, y2 - y1 + scaledSize, false);
         room.addGroup(Game::groupRoom);
         std::cout << room.getComponent<ColliderComponent>().collider.x << " " << room.getComponent<ColliderComponent>().collider.y << std::endl;
     }
 
-    // for (auto r : Game::roomCoordinate)
-    // {
-    //     std::cout << r.x << " " << r.y << " " << r.w << " " << r.h << std::endl;
-    // }
     mapFile.close();
 }
 
