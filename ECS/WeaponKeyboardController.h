@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Components.h"
-
+#include "SDL_mixer.h"
+extern Mix_Chunk *gSlash;
 class WeaponKeyboardController : public Component
 {
 private:
@@ -28,10 +29,11 @@ public:
             {
                 if (weapon->isAtacking == false)
                 {
+                    Mix_PlayChannel(-1, gSlash, 0);
                     weapon->lastTime_NormalAttack = SDL_GetTicks();
                     weapon->isAtacking = true;
                     sprite->Play("Hit");
-                    weapon->attackCounter ++;
+                    weapon->attackCounter++;
                 }
             }
             break;

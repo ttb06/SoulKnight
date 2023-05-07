@@ -14,6 +14,15 @@
 using std::cout;
 using std::endl;
 
+Mix_Music *gMusic = NULL;
+Mix_Music *gCombat = NULL;
+
+Mix_Chunk *gPlayerHurt = NULL;
+Mix_Chunk *gSlash = NULL;
+
+bool isPlayingMusic = false;
+bool isPlayingCombat = false;
+
 Map *gamemap;
 Manager manager;
 
@@ -79,6 +88,18 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
         }
 
         isRunning = true;
+        // Initialize PNG loading
+        int imgFlags = IMG_INIT_PNG;
+        if (!(IMG_Init(imgFlags) & imgFlags))
+        {
+            printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+        }
+
+        // Initialize SDL_mixer
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+        {
+            printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+        }
     }
 
     if (TTF_Init() == -1)
@@ -86,6 +107,11 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
         std::cout << "Error: SDL_TTF" << std::endl;
     }
 
+    gMusic = Mix_LoadMUS("sound/music.wav");
+    gCombat = Mix_LoadMUS("sound/combat.wav");
+
+    gPlayerHurt = Mix_LoadWAV("sound/playerHurt.wav");
+    gSlash = Mix_LoadWAV("sound/sword.wav");
     //  assets implenemtation
 
     //  add Texture
@@ -334,6 +360,7 @@ void Game::update()
             if (Collision::AABB(playerCol, eCol))
             {
                 player.getComponent<HUDComponent>().getDamage(e->getComponent<EnermyComponent>().collisionDamage);
+                Mix_PlayChannel(-1, gPlayerHurt, 0);
             }
         }
 
@@ -343,6 +370,7 @@ void Game::update()
             {
                 p->getComponent<ProjectileSpriteComponent>().destroy();
                 player.getComponent<HUDComponent>().getDamage(p->getComponent<ProjectileComponent>().dame());
+                Mix_PlayChannel(-1, gPlayerHurt, 0);
             }
         }
 
@@ -410,6 +438,12 @@ void Game::render()
     // render map (floor, things which are always behind player)
     if (curLevel == 0)
     {
+        if (!isPlayingMusic)
+        {
+            isPlayingMusic = true;
+            Mix_PlayMusic(gMusic, -1);
+        }
+
         SDL_Texture *gameOver = assets->GetTexture("menu");
         SDL_Rect dest = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         SDL_Rect src = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
@@ -418,6 +452,12 @@ void Game::render()
 
     if (curLevel > 0 && curLevel <= NUMBER_OF_LEVEL)
     {
+        if (!isPlayingCombat)
+        {
+            isPlayingCombat = true;
+            Mix_PlayMusic(gCombat, -1);
+        }
+
         for (auto &t : tiles)
         {
             t->draw();
@@ -480,11 +520,15 @@ void Game::render()
 
         // draw hud to the topmost
         player.getComponent<HUDComponent>().draw();
-
         // label.draw();
     }
     if (curLevel == NUMBER_OF_LEVEL + 1)
     {
+        if (!isPlayingMusic)
+        {
+            isPlayingMusic = true;
+            Mix_PlayMusic(gMusic, -1);
+        }
         player.getComponent<HUDComponent>().curHealth = 0;
         SDL_Texture *gameOver = assets->GetTexture("win");
         SDL_Rect dest = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
@@ -494,12 +538,18 @@ void Game::render()
 
     if (curLevel > NUMBER_OF_LEVEL + 1)
     {
+        if (!isPlayingMusic)
+        {
+            isPlayingMusic = true;
+            Mix_PlayMusic(gMusic, -1);
+        }
         player.getComponent<HUDComponent>().curHealth = 0;
         SDL_Texture *gameOver = assets->GetTexture("gameover");
         SDL_Rect dest = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         SDL_Rect src = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
         TextureManager::Draw(gameOver, src, dest, SDL_FLIP_NONE);
     }
+
     SDL_RenderPresent(renderer);
 }
 
