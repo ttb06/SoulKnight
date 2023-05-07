@@ -18,7 +18,7 @@ Map::Map(std::string tID, int ms, int ts)
 Map::~Map()
 {
 }
-int count = 0;
+
 void Map::LoadMap(std::string path, int sizeX, int sizeY)
 {
     char c;
@@ -157,14 +157,38 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
             }
             cnt++;
 
-            srcY = (atoi(index.c_str()) / 10) * tileSize;
-            srcX = (atoi(index.c_str()) % 10) * tileSize;
+            int idx = atoi(index.c_str());
 
-            if (srcY == 0 && srcX == 0)
+            if (idx == 0)
                 continue;
-            std::cout << "[Map] created enermy " << x << "   " << y << std::endl;
+            // voi so da dua vao, so hang don vi chi sprite nap vao quai, con lai la so phong
+            // Vi vay, so quai max la 10, se cap nhat cach tinh moi sau
+            int enermyIndex = idx % 10;
+            std::cout << enermyIndex << std::endl;
+            int room = idx / 10;
             Vector2D pos(x * scaledSize, y * scaledSize);
-            Game::assets->CreateEnermy(pos, 1, 32, 36, "big_demon", 7, 1, "fire_projectile");
+            std::string enermyID, prjID;
+            int width, height, speed;
+            switch (enermyIndex)
+            {
+                case 2:
+                enermyID = "big_demon";
+                prjID = "fire_projectile";
+                speed = 1;
+                width = 32;
+                height = 36;
+                break;
+
+                case 1:
+                enermyID = "big_zombie";
+                prjID = "ice_projectile";
+                speed = 1;
+                width = 32;
+                height = 36;
+                break;
+            }
+
+            Game::assets->CreateEnermy(pos, speed, width, height, enermyID, 7, 1, prjID, room);
         }
     }
     mapFile.close();

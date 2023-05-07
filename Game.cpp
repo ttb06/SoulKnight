@@ -82,16 +82,22 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
 
     //  add Texture
     assets->AddTexture("terrain", "assets/tiles_assets_final.png");
-    assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("projectile", "assets/proj.png");
-    assets->AddTexture("big_demon", "assets/big_demon_amins.png");
+      
+    assets->AddTexture("player", "assets/knight_anims.png");
     assets->AddTexture("anime_sword", "assets/weapon_anime_sword.png");
-    assets->AddTexture("katana", "assets/test.png");
-    assets->AddTexture("skull", "assets/skull.png");
-    assets->AddTexture("ui_heart", "assets/ui_heart.png");
-    assets->AddTexture("ui_armor", "assets/ui_armor.png");
+    assets->AddTexture("katana", "assets/katana_slash.png");
+    
+    assets->AddTexture("big_demon", "assets/big_demon_anims.png");
+    assets->AddTexture("big_zombie", "assets/big_zombie_anims.png");
     assets->AddTexture("fire_projectile", "assets/projectile_fire_ball.png");
     assets->AddTexture("ice_projectile", "assets/projectile_ice_ball.png");
+    assets->AddTexture("skull", "assets/skull.png");
+
+    
+    assets->AddTexture("ui_heart", "assets/ui_heart.png");
+    assets->AddTexture("ui_armor", "assets/ui_armor.png");
+    
 
     // add Font
     assets->AddFont("DungeonFont", "assets/DungeonFont.ttf", 16);
@@ -108,7 +114,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addComponent<MouseController>();
     player.addComponent<KeyboardController>();
     player.addComponent<ColliderComponent>("player", 0, 12, 16, true);
-    player.addComponent<HUDComponent>(10, 10, Vector2D(6, 6), 2, "ui_heart", "ui_armor");
+    player.addComponent<HUDComponent>(8, 4, Vector2D(6, 6), 2, "ui_heart", "ui_armor");
     player.addComponent<UpdateSpriteComponent>();
     player.addGroup(groupPlayers);
 
@@ -123,27 +129,6 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     SDL_Color white = {255, 255, 255, 255};
 
     label.addComponent<UILabel>(10, 10, "Init", "DungeonFont", white);
-
-    // assets->CreatProjectile(Vector2D(100, 100), Vector2D(0, 0), 500, 0, "ice_projectile");
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 2), 200, 0, "projectile");
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 3), 200, 1, "projectile");
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 4), 200, 1, "projectile");
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 5), 200, 1, "projectile");
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 6), 200, 1, "projectile");
-    // assets->CreatProjectile(Vector2D(3, 3), Vector2D(1, 7), 200, 1, "projectile");
-    // for (int i = 10; i <= 100; i += 10)
-    // {
-    //     for (int j = 10; j <= 100; j += 10)
-    //     {
-    //         assets->CreatProjectile(Vector2D(i, j), Vector2D(1, 1), 200, 0, "projectile");
-    //     }
-    // }
-    // assets->CreatProjectile(Vector2D(0, 0), Vector2D(1, 1), 200, 1, "ice_projectile");
-    // assets->CreateEnermy(Vector2D(500, 500), 1, 32, 36, "big_demon", 7, 1);
-    // assets->CreateEnermy(Vector2D(2000, 2000), 1, 32, 36, "big_demon", 7, 1);
-    // assets->CreateEnermy(Vector2D(500, 700), 1, 32, 36, "big_demon", 7, 1);
-    // assets->CreateEnermy(Vector2D(500, 900), 1, 32, 36, "big_demon", 7, 1);
-    // assets->CreateEnermy(Vector2D(500, 2100), 1, 32, 36, "big_demon", 7, 1);
 }
 
 void Game::handleEvents()

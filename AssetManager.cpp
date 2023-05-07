@@ -21,13 +21,13 @@ void AssetManager::CreatProjectile(Vector2D pos, Vector2D vel, int range, int sp
     projectile.addGroup(Game::groupProjectiles);
 }
 
-void AssetManager::CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD, std::string prjtile)
+void AssetManager::CreateEnermy(Vector2D pos, int spd, int width, int height, std::string idSprite, int mH, int cD, std::string prjtile, int r)
 {
     auto &enermy(manager->addEntity());
     enermy.addComponent<TransformComponent>((int)pos.x, (int)pos.y, width, height, 3, spd);
     enermy.addComponent<SpriteComponent>(idSprite, true, false);
     enermy.addComponent<ColliderComponent>(idSprite);
-    enermy.addComponent<EnermyComponent>(mH, cD, prjtile);
+    enermy.addComponent<EnermyComponent>(mH, cD, prjtile, r);
     enermy.addComponent<UpdateSpriteComponent>();
     enermy.addGroup(Game::groupEnermies);
 }

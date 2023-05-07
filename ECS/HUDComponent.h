@@ -26,7 +26,7 @@ public:
     int attackDamage = 0;
 
     Uint32 lastDameTakenTime = 0;
-
+    Uint32 lastTimeRestoreArmor = 0;
     HUDComponent(){};
 
     // for enermies
@@ -87,6 +87,16 @@ public:
         }
         if (curHealth <= 0)
             isDead = true;
+
+        if (SDL_GetTicks() - lastDameTakenTime > TIME_RESTORE_ARMOR)
+        {
+            if (SDL_GetTicks() - lastTimeRestoreArmor > TIME_RESTORE_ARMOR)
+            lastTimeRestoreArmor = SDL_GetTicks();
+            {
+                if (curArmor < maxArmor)
+                    curArmor += 1;
+            }
+        }
     }
 
     void draw() override
@@ -142,7 +152,6 @@ public:
             SDL_Rect dest = {curX, curY, 16 * Game::total_scale, 16 * Game::total_scale};
             TextureManager::Draw(armorTex, src, dest, SDL_FLIP_NONE);
         }
-
     }
 
     void getDamage(int dam)
