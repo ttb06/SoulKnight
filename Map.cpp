@@ -18,7 +18,7 @@ Map::Map(std::string tID, int ms, int ts)
 Map::~Map()
 {
 }
-
+int count = 0;
 void Map::LoadMap(std::string path, int sizeX, int sizeY)
 {
     char c;
@@ -162,14 +162,12 @@ void Map::LoadMap(std::string path, int sizeX, int sizeY)
 
             if (srcY == 0 && srcX == 0)
                 continue;
-            Vector2D pos(x * scaledSize, y * scaledSize);
             std::cout << "[Map] created enermy " << x << "   " << y << std::endl;
-            if (x == 46 && y == 21)
-            Game::assets->CreateEnermy(pos, 1, 32, 36, "big_demon", 7, 1, "ice_projectile");
-
-            // Game::assets->CreateEnermy(pos, 3, 32, 36, "big_demon", 7, 1);
+            Vector2D pos(x * scaledSize, y * scaledSize);
+            Game::assets->CreateEnermy(pos, 1, 32, 36, "big_demon", 7, 1, "fire_projectile");
         }
     }
+    mapFile.close();
 }
 
 void Map::AddTile(int srcX, int srcY, int xPos, int yPos)

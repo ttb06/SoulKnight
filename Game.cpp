@@ -101,7 +101,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     // esc implementation
     map->LoadMap("assets/map_lv1.txt", LV1_SIZE_X, LV1_SIZE_Y);
 
-    //create player
+    // create player
     player.addComponent<TransformComponent>(400, 400, 16, 28, Game::total_scale, 5);
     player.addComponent<DirectionComponent>();
     player.addComponent<SpriteComponent>("player", true, true);
@@ -112,7 +112,7 @@ void Game::init(const char *title, int xPos, int yPos, int width, int height, bo
     player.addComponent<UpdateSpriteComponent>();
     player.addGroup(groupPlayers);
 
-    //create weapon
+    // create weapon
     weapon.addComponent<DirectionComponent>();
     weapon.addComponent<TransformComponent>();
     weapon.addComponent<WeaponComponent>("katana", 29, 6, Game::total_scale);
@@ -164,11 +164,10 @@ void Game::handleEvents()
 }
 SDL_Rect Cur;
 
-
 void Game::update()
 {
-    weapon.getComponent<TransformComponent>().setPosition(player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width/2, 
-    player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height/2);
+    weapon.getComponent<TransformComponent>().setPosition(player.getComponent<TransformComponent>().position.x + player.getComponent<TransformComponent>().width / 2,
+                                                          player.getComponent<TransformComponent>().position.y + player.getComponent<TransformComponent>().height / 2);
     // store old information
     if (player.getComponent<HUDComponent>().curHealth <= 0)
     {
@@ -194,8 +193,6 @@ void Game::update()
         SDL_Rect cCol = c->getComponent<ColliderComponent>().collider;
         if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
         {
-            std::cout << "[Game.cpp]: Player hit collider" << std::endl;
-
             player.getComponent<TransformComponent>().position.x -= playerVel.x * playerSpeed;
             player.getComponent<ColliderComponent>().update();
             if (Collision::AABB(player.getComponent<ColliderComponent>().collider, cCol))
@@ -227,10 +224,8 @@ void Game::update()
     {
         if (Collision::AABB(player.getComponent<ColliderComponent>().collider, p->getComponent<ColliderComponent>().collider))
         {
-            // p->destroy();
             p->getComponent<ProjectileSpriteComponent>().destroy();
-            player.getComponent<HUDComponent>().getDamage(p->getComponent<ProjectileComponent>().dame()); 
-            std::cout << "[Game.cpp]: Hit player" << std::endl;
+            player.getComponent<HUDComponent>().getDamage(p->getComponent<ProjectileComponent>().dame());
         }
     }
 
@@ -238,7 +233,7 @@ void Game::update()
     radiusWeapon.normalize();
     radiusWeapon.x *= RANGE_MELE_WEAPON * Game::total_scale;
     radiusWeapon.y *= RANGE_MELE_WEAPON * Game::total_scale;
-    
+
     for (auto &e : enermies)
     {
         if (weapon.getComponent<WeaponComponent>().isAtacking &&
@@ -324,7 +319,7 @@ void Game::render()
     for (auto &p : projectiles)
     {
         // if (Collision::AABB(camera, p->getComponent<ColliderComponent>().collider))
-            p->draw();
+        p->draw();
     }
 
     // render wall in front of player
@@ -340,7 +335,9 @@ void Game::render()
         c->draw();
     }
 
+    // draw hud to the topmost
     player.getComponent<HUDComponent>().draw();
+
     label.draw();
     SDL_SetRenderDrawColor(Game::renderer, 255, 255, 255, 255);
     SDL_RenderFillRect(Game::renderer, &Cur);
