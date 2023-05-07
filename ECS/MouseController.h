@@ -30,17 +30,25 @@ public:
             path.clear();
             return true;
         }
-        int d[maxN][maxN];
-        std::pair<int, int> par[maxN][maxN];
 
         path.clear();
+        int d[maxN][maxN];
+        std::pair<int, int> par[maxN][maxN];
         for (int i = 0; i <= r; i++)
         {
             std::fill_n(d[i], c + 1, 0);
             std::fill_n(Game::visit[i], c + 1, false);
             std::fill_n(par[i], c + 1, std::make_pair(-1, -1));
         }
-
+        // for (int i = 0; i <= r; i++)
+        // {
+        //     for (int j = 0; j <= c; j++)
+        //     {
+        //         d[i][j] = 0;
+        //         // Game::visit[i][j] = false;
+        //         // par[i][j] = std::make_pair(-1, -1);
+        //     }
+        // }
         std::queue<std::pair<int, int>> q;
         q.push({sx, sy});
         Game::visit[sx][sy] = true;
@@ -50,7 +58,6 @@ public:
             int y = q.front().second;
             q.pop();
 
-            // Nếu gặp được ô B thì kết thúc thủ tục BFS
             if (x == dx && y == dy)
             {
                 int tmpx = dx, tmpy = dy;
@@ -93,7 +100,8 @@ public:
 
     void update() override
     {
-        if (!isUsing) return;
+        if (!isUsing)
+            return;
         if (Game::event.type == SDL_MOUSEBUTTONDOWN)
         {
             if (Game::event.button.button == SDL_BUTTON_RIGHT)
@@ -138,7 +146,7 @@ public:
         int sx = entity->getComponent<TransformComponent>().getPosGridX();
         int sy = entity->getComponent<TransformComponent>().getPosGridY();
 
-        if (bfs(LV1_SIZE_X, LV1_SIZE_Y, sx, sy, dx, dy) && transform->autoMove)
+        if (bfs(LV_SIZE_X[Game::curLevel], LV_SIZE_Y[Game::curLevel], sx, sy, dx, dy) && transform->autoMove)
         {
             std::cout << "[mouse] Current pos: " << sx << " " << sy << std::endl;
             std::cout << "[Mouse] path:  ";

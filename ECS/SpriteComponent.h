@@ -47,6 +47,8 @@ public:
         {
             Animation hit = Animation(2, 2, 100);
             animations.emplace("Hit", hit);
+            Animation dead = Animation(3, 1, 100);
+            animations.emplace("Dead", dead);
         }
 
         Play("Idle");

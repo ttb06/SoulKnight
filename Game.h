@@ -7,9 +7,10 @@
 #include "Constant.h"
 
 using std::vector;
-// class LTimer;
+
 class ColliderComponent;
 class AssetManager;
+class Menu;
 
 class Game
 {
@@ -22,6 +23,7 @@ public:
     void handleEvents();
     void update();
     bool running() { return isRunning; }
+    void loadNextLevel();
     void render();
     void clean();
 
