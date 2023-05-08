@@ -14,11 +14,11 @@ My Advanced Programming project - Soul Knight clone (with Spirit == Soul, Warrio
 Clone this repo. In the folder of repo, firstly, delete file `Makefile` and rename `Makefile (Linux)` to `Makefile`. Then, open Terminal and type respectively:
 - `sudo apt install make`
 - `sudo apt install g++`
-- `sudo apt-get install libsdl2-dev'
-- 'sudo apt-get install libsdl2-image-dev'
-- 'sudo apt-get install libsdl2-mixer-dev'
-- 'sudo apt-get install libsdl2-ttf-dev'
-- 'make'
+- `sudo apt-get install libsdl2-dev`
+- `sudo apt-get install libsdl2-image-dev`
+- `sudo apt-get install libsdl2-mixer-dev`
+- `sudo apt-get install libsdl2-ttf-dev`
+- `make`
 Now enjoy the game!!!
 
 ## Gameplay
