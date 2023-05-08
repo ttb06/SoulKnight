@@ -10,7 +10,7 @@ My Advanced Programming project - Soul Knight clone (with Spirit == Soul, Warrio
 - Open `cmd` and type `make`. It will compile into a program named `main.exe`.
 - Now enjoy the game!!! 
 
-##Linux Installation (tested on Ubuntu)
+## Linux Installation (tested on Ubuntu)
 Clone this repo. In the folder of repo, firstly, delete file `Makefile` and rename `Makefile (Linux)` to `Makefile`. Then, open Terminal and type respectively:
 - `sudo apt install make`
 - `sudo apt install g++`
