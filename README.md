@@ -19,7 +19,7 @@ Clone this repo. In the folder of repo, firstly, delete file `Makefile` and rena
 - `sudo apt-get install libsdl2-mixer-dev`
 - `sudo apt-get install libsdl2-ttf-dev`
 - `make`
-Now enjoy the game!!!
+ - Now enjoy the game!!!
 
 ## Gameplay
 - You have to control player to clear enermies in each room. Enermies can shoot projectiles, and have collider damage.
