@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Components.h"
-#include "SDL_mixer.h"
+#include <SDL2/SDL_mixer.h>
 extern Mix_Chunk *gSlash;
 class WeaponKeyboardController : public Component
 {
