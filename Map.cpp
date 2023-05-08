@@ -1,8 +1,8 @@
 #include "Map.h"
 #include "Game.h"
 #include <fstream>
-#include "ECS\ECS.h"
-#include "ECS\Components.h"
+#include "ECS/ECS.h"
+#include "ECS/Components.h"
 
 // manager has been defined somewhere else
 extern Manager manager;
