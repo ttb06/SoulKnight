@@ -5,7 +5,7 @@
 #include "../Game.h"
 // #include "../Timer.h"
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 
 extern Entity &player;
 

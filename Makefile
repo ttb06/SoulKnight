@@ -5,7 +5,7 @@ OBJS = main.cpp Game.cpp GameObject.cpp TextureManager.cpp Map.cpp Vector2D.cpp 
 CC = g++
 
 #INCLUDE_PATHS specifies the additional include paths we'll need
-INCLUDE_PATHS = -I src\include\SDL2
+INCLUDE_PATHS = -I src\include
 
 #LIBRARY_PATHS specifies the additional library paths we'll need
 LIBRARY_PATHS = -L src\lib
