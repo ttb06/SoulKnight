@@ -23,7 +23,7 @@ Mix_Chunk *gSlash = NULL;
 bool isPlayingMusic = false;
 bool isPlayingCombat = false;
 
-Map *gamemap;
+Map *gamemap = NULL;
 Manager manager;
 
 SDL_Renderer *Game::renderer = nullptr;
