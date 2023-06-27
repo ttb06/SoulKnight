@@ -51,7 +51,7 @@ This Game is built with ECS system which I learned from [`here`](https://www.you
 - Using .h and .cpp logically.
 - Math (and VERY VERY MATH :< )
 
-##Bug
+## Bug
 - When compile file in Ubuntu, or use winlibs to compile file in Window might cause crash.
 
 ## Self-Assessment
