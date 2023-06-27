@@ -38,7 +38,7 @@ This Game is built with ECS system which I learned from [`here`](https://www.you
 
 ### Enermy/Enermies
 * Can shoot projectiles.
-
+  
 ### Projectiles
 * Deal damage upon hitting player.
 
@@ -50,6 +50,9 @@ This Game is built with ECS system which I learned from [`here`](https://www.you
 - BFS (to move by right-click mouse)
 - Using .h and .cpp logically.
 - Math (and VERY VERY MATH :< )
+
+##Bug
+- When compile file in Ubuntu, or use winlibs to compile file in Window might cause crash.
 
 ## Self-Assessment
 9 - 9.5
